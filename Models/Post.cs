@@ -12,7 +12,6 @@ namespace BlogPosts.Models
         public string Abstract { get; set; }
         public string Content { get; set; }
         public byte[] Image { get; set; }
-        public int BlogId { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public Blog Blog { get; set; }
