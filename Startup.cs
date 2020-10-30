@@ -1,20 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using BlogPosts.Data;
+using BlogPosts.Helpers;
+using BlogPosts.Models;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace BlogPosts
 {
+    using System;
+    using System.Threading.Tasks;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -28,16 +27,41 @@ namespace BlogPosts
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                                                            options.UseSqlServer(
+                                                             Configuration
+                                                                 .GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+            //services.AddTransient<Seeder>();
+
         }
+
+/*
+        public async Task ConfigureAsync(IApplicationBuilder app, IWebHostEnvironment env, Seeder seedHelper)
+        {
+            if (seedHelper is null) throw new ArgumentNullException(nameof(seedHelper));
+            await Seeder.SeedDataAsync().ConfigureAwait(false);
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+        }
+*/
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
         {
             if (env.IsDevelopment())
             {
@@ -52,19 +76,17 @@ namespace BlogPosts
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
-            });
+                             {
+                                 endpoints.MapControllerRoute(
+                                                              "default",
+                                                              "{controller=Home}/{action=Index}/{id?}");
+                                 endpoints.MapRazorPages();
+                             });
+
         }
     }
 }

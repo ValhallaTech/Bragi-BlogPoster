@@ -34,7 +34,7 @@ namespace BlogPosts.Controllers
             }
 
             var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                    .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -52,9 +52,7 @@ namespace BlogPosts.Controllers
         // POST: Tags/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Tag tag)
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Create([Bind("Id,Name")] Tag tag)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +60,7 @@ namespace BlogPosts.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(tag);
         }
 
@@ -78,15 +77,14 @@ namespace BlogPosts.Controllers
             {
                 return NotFound();
             }
+
             return View(tag);
         }
 
         // POST: Tags/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Tag tag)
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Tag tag)
         {
             if (id != tag.Id)
             {
@@ -111,8 +109,10 @@ namespace BlogPosts.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(tag);
         }
 
@@ -125,7 +125,7 @@ namespace BlogPosts.Controllers
             }
 
             var tag = await _context.Tag
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                    .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -135,8 +135,7 @@ namespace BlogPosts.Controllers
         }
 
         // POST: Tags/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tag = await _context.Tag.FindAsync(id);

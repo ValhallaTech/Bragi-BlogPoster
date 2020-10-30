@@ -34,7 +34,7 @@ namespace BlogPosts.Controllers
             }
 
             var blog = await _context.Blog
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                     .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
@@ -52,9 +52,7 @@ namespace BlogPosts.Controllers
         // POST: Blogs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Url")] Blog blog)
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Create([Bind("Id,Name,Url")] Blog blog)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +60,7 @@ namespace BlogPosts.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(blog);
         }
 
@@ -78,14 +77,14 @@ namespace BlogPosts.Controllers
             {
                 return NotFound();
             }
+
             return View(blog);
         }
 
         // POST: Blogs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost] [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Url")] Blog blog)
         {
             if (id != blog.Id)
@@ -111,8 +110,10 @@ namespace BlogPosts.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(blog);
         }
 
@@ -125,7 +126,7 @@ namespace BlogPosts.Controllers
             }
 
             var blog = await _context.Blog
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                     .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
@@ -135,8 +136,7 @@ namespace BlogPosts.Controllers
         }
 
         // POST: Blogs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var blog = await _context.Blog.FindAsync(id);

@@ -9,40 +9,60 @@
 <div>
     <h4>Comment</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
+    <dl class = "row" >
+        <dt class = "col-sm-2" >
             @Html.DisplayNameFor(model => model.Content)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" >
             @Html.DisplayFor(model => model.Content)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-2" >
             @Html.DisplayNameFor(model => model.Created)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" >
             @Html.DisplayFor(model => model.Created)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-2" >
             @Html.DisplayNameFor(model => model.Updated)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" >
             @Html.DisplayFor(model => model.Updated)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-2" >
             @Html.DisplayNameFor(model => model.Post)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" >
             @Html.DisplayFor(model => model.Post.Id)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class = "col-sm-2" >
             @Html.DisplayNameFor(model => model.Author)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" >
             @Html.DisplayFor(model => model.Author.Id)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+@*<div>
+    <a asp-action = "Edit"
+       asp-route-id = "@Model.Id" >
+        Edit
+    </a> |
+    <a asp-action = "Index" >Back to List</a>
 </div>
+<div class = "" ></div>
+@foreach (var comment in Model.Comments)
+{
+    <div class = "comment" >
+        <div class = "comment-header d-flex justify-content-between" >
+            <div class = "align-items-center d-flex user-select-all" >
+                <div class = "image" ></div>
+                <div class = "title" >
+                    <strong>@comment.BlogUser.LastName,@comment.BlogUser.FirstName</strong><span class = "date" ></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class = "comment-body" >
+        <p>@comment.Body</p>
+    </div>
+}*@

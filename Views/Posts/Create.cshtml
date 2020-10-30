@@ -8,55 +8,110 @@
 
 <h4>Post</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BlogId" class="control-label"></label>
-                <select asp-for="BlogId" class ="form-control" asp-items="ViewBag.BlogId"></select>
+<div class = "row" >
+    <div class = "col-md-4" >
+        <form asp-action = "Create"
+              enctype = "multipart/form-data" >
+            <div asp-validation-summary = "ModelOnly"
+                 class = "text-danger" >
             </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+            @*Scenario 1: We are given a model, therefore we must have a foreign key*@
+
+            @if (Model != null)
+            {
+                <input asp-for = "BlogId"
+                       type = "hidden" />
+            }
+            else
+            {
+                <div class = "form-group" >
+                    <label asp-for = "BlogId"
+                           class = "control-label" >
+                    </label>
+                    @*<input asp-for="BlogId" class ="form-control"/>*@
+                    <select asp-for = "BlogId"
+                            asp-items = "ViewBag.BlogId"
+                            class = "form-control" >
+                    </select>
+                </div>
+            }
+            <div class = "form-group" >
+                <label asp-for = "Title"
+                       class = "control-label" >
+                </label>
+                <input asp-for = "Title"
+                       class = "form-control" />
+                <span asp-validation-for = "Title"
+                      class = "text-danger" >
+                </span>
             </div>
-            <div class="form-group">
-                <label asp-for="Abstract" class="control-label"></label>
-                <input asp-for="Abstract" class="form-control" />
-                <span asp-validation-for="Abstract" class="text-danger"></span>
+            <div class = "form-group" >
+                <label asp-for = "Abstract"
+                       class = "control-label" >
+                </label>
+                <input asp-for = "Abstract"
+                       class = "form-control" />
+                <span asp-validation-for = "Abstract"
+                      class = "text-danger" >
+                </span>
             </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
+            <div class = "form-group" >
+                <label asp-for = "FileName"
+                       class = "control-label" >
+                </label>
+                <input asp-for = "Image"
+                       class = "form-control"
+                       type = "file" />
             </div>
-            <div class="form-group">
+            <div class = "form-group" >
+                <label asp-for = "Content"
+                       class = "control-label" >
+                </label>
+                <textarea asp-for="Content" class="form-control" ></textarea>
+                <span asp-validation-for = "Content"
+                      class = "text-danger" >
+                </span>
+            </div>
+            @*<div class="form-group">
                 <label asp-for="Image" class="control-label"></label>
                 <input asp-for="Image" class="form-control" />
                 <span asp-validation-for="Image" class="text-danger"></span>
+            </div>*@
+            <div class = "form-group" >
+                @*<label asp-for= "Created" class="control-label"></label>*@
+                <input asp-for = "CreatedDateTime"
+                       class = "form-control"
+                       hidden = "" />
+                <span asp-validation-for = "CreatedDateTime"
+                      class = "text-danger" >
+                </span>
             </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
+            <div class = "form-group" >
+                @*<label asp-for="Updated" class="control-label"></label>*@
+                <input asp-for = "UpdatedDateTime"
+                       class = "form-control"
+                       hidden = "" />
+                <span asp-validation-for = "UpdatedDateTime"
+                      class = "text-danger" >
+                </span>
             </div>
-            <div class="form-group">
-                <label asp-for="Updated" class="control-label"></label>
-                <input asp-for="Updated" class="form-control" />
-                <span asp-validation-for="Updated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class = "form-group" >
+                <input class = "btn btn-primary"
+                       type = "submit"
+                       value = "Create" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action = "Index" >Back to List</a>
 </div>
 
+<script referrerpolicy = "origin"
+        src = "https://cdn.tiny.cloud/1/wl88u0luerlzua4lpf6b9ufqi8xa152mskots2gti6i7ekdj/tinymce/5/tinymce.min.js" ></script>
+<script>tinymce.init ( { selector: 'textarea' } );</script>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

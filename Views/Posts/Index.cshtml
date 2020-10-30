@@ -7,37 +7,38 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action = "Create" >Create New</a>
 </p>
-<table class="table">
+<table class = "table" >
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Abstract)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Blog)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Abstract)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Image)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreatedDateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UpdatedDateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Blog)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -46,26 +47,35 @@
                 @Html.DisplayFor(modelItem => item.Abstract)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Content)
+                @Html.Raw(item.Content)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Image)
+                @ViewBag["Image"]
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @Html.DisplayFor(modelItem => item.CreatedDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                @Html.DisplayFor(modelItem => item.UpdatedDateTime)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Blog.Id)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action = "Edit"
+                   asp-route-id = "@item.Id" >
+                    Edit
+                </a> |
+                <a asp-action = "Details"
+                   asp-route-id = "@item.Id" >
+                    Details
+                </a> |
+                <a asp-action = "Delete"
+                   asp-route-id = "@item.Id" >
+                    Delete
+                </a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

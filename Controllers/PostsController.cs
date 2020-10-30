@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BlogPosts.Data;
+using BlogPosts.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BlogPosts.Data;
-using BlogPosts.Models;
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlogPosts.Controllers
 {
@@ -19,12 +20,14 @@ namespace BlogPosts.Controllers
             _context = context;
         }
 
+
         // GET: Posts
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Post.Include(p => p.Blog);
             return View(await applicationDbContext.ToListAsync());
         }
+
 
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -35,39 +38,79 @@ namespace BlogPosts.Controllers
             }
 
             var post = await _context.Post
-                .Include(p => p.Blog)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                     .Include(p => p.Blog)
+                                     .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
 
+            var    binary    = Convert.ToBase64String(post.Image);
+            var    ext       = Path.GetExtension(post.FileName);
+            string imageData = $"data:image/{ext};base64,[binary]";
+
+            ViewData["Image"] = imageData;
             return View(post);
         }
 
+
         // GET: Posts/Create
-        public IActionResult Create()
+        public IActionResult Create(int? id)
         {
-            ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Id");
-            return View();
+            Post post = null;
+            if (id != null)
+            {
+                var blog = _context.Blog.Find(id);
+                if (blog == null)
+                {
+                    return NotFound();
+                }
+
+                post                 = new Post() {BlogId = (int) id};
+                ViewData["BlogName"] = blog.Name;
+            }
+            else
+            {
+                ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Name");
+            }
+
+            return View(post);
         }
+
 
         // POST: Posts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,BlogId,Title,Abstract,Content,Image,Created,Updated")] Post post)
+
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Create(
+            [Bind("Id,BlogId,Title,Abstract,Content,Created,Updated")]
+            Post post, IFormFile image)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(post);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                post.CreatedDateTime = DateTime.UtcNow;
+                if (image != null)
+                {
+                    post.FileName = image.FileName;
+                    var ms = new MemoryStream();
+                    await image.CopyToAsync(ms);
+                    post.Image = ms.ToArray();
+                    ms.Close();
+                    await ms.DisposeAsync();
+                }
+                else
+                {
+                    _context.Add(post);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Id", post.BlogId);
             }
-            ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Id", post.BlogId);
+
             return View(post);
         }
+
 
         // GET: Posts/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -82,16 +125,19 @@ namespace BlogPosts.Controllers
             {
                 return NotFound();
             }
+
             ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Id", post.BlogId);
             return View(post);
         }
 
+
         // POST: Posts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,Image,Created,Updated")] Post post)
+
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Edit(
+            int id, [Bind("Id,BlogId,Title,Abstract,Content,Image,Created,Updated")]
+            Post post)
         {
             if (id != post.Id)
             {
@@ -101,6 +147,7 @@ namespace BlogPosts.Controllers
             if (ModelState.IsValid)
             {
                 try
+
                 {
                     _context.Update(post);
                     await _context.SaveChangesAsync();
@@ -116,11 +163,14 @@ namespace BlogPosts.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["BlogId"] = new SelectList(_context.Blog, "Id", "Id", post.BlogId);
             return View(post);
         }
+
 
         // GET: Posts/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -131,8 +181,8 @@ namespace BlogPosts.Controllers
             }
 
             var post = await _context.Post
-                .Include(p => p.Blog)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                     .Include(p => p.Blog)
+                                     .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -141,9 +191,9 @@ namespace BlogPosts.Controllers
             return View(post);
         }
 
+
         // POST: Posts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var post = await _context.Post.FindAsync(id);

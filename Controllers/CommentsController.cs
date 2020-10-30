@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BlogPosts.Data;
 using BlogPosts.Models;
+using System.Security.Claims;
 
 namespace BlogPosts.Controllers
 {
@@ -35,9 +36,9 @@ namespace BlogPosts.Controllers
             }
 
             var comment = await _context.Comment
-                .Include(c => c.Author)
-                .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                        .Include(c => c.Author)
+                                        .Include(c => c.Post)
+                                        .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -50,16 +51,16 @@ namespace BlogPosts.Controllers
         public IActionResult Create()
         {
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
-            ViewData["PostId"] = new SelectList(_context.Set<Post>(), "Id", "Id");
+            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id");
             return View();
         }
 
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PostId,AuthorId,Content,Created,Updated")] Comment comment)
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Create(
+            [Bind("Id,PostId,AuthorId,Content,Created,Updated")]
+            Comment comment)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +68,9 @@ namespace BlogPosts.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"] = new SelectList(_context.Set<Post>(), "Id", "Id", comment.PostId);
+            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -85,18 +87,23 @@ namespace BlogPosts.Controllers
             {
                 return NotFound();
             }
+
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"] = new SelectList(_context.Set<Post>(), "Id", "Id", comment.PostId);
+            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
         // POST: Comments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PostId,AuthorId,Content,Created,Updated")] Comment comment)
+        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Edit(
+            int id, [Bind("Id,PostId,AuthorId,Content,Created,Updated")]
+            Comment comment)
         {
+            if (ModelState.IsValid)
+            {
+            }
+
             if (id != comment.Id)
             {
                 return NotFound();
@@ -120,10 +127,12 @@ namespace BlogPosts.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"] = new SelectList(_context.Set<Post>(), "Id", "Id", comment.PostId);
+            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -136,9 +145,9 @@ namespace BlogPosts.Controllers
             }
 
             var comment = await _context.Comment
-                .Include(c => c.Author)
-                .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                                        .Include(c => c.Author)
+                                        .Include(c => c.Post)
+                                        .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -148,8 +157,7 @@ namespace BlogPosts.Controllers
         }
 
         // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var comment = await _context.Comment.FindAsync(id);
