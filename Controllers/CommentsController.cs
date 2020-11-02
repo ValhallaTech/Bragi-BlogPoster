@@ -13,17 +13,17 @@ namespace BlogPosts.Controllers
 {
     public class CommentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         public CommentsController(ApplicationDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: Comments
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Comment.Include(c => c.Author).Include(c => c.Post);
+            var applicationDbContext = this.context.Comment.Include(c => c.Author).Include(c => c.Post);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,10 +35,10 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment
-                                        .Include(c => c.Author)
-                                        .Include(c => c.Post)
-                                        .FirstOrDefaultAsync(m => m.Id == id);
+            var comment = await this.context.Comment
+                                    .Include(c => c.Author)
+                                    .Include(c => c.Post)
+                                    .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -50,8 +50,8 @@ namespace BlogPosts.Controllers
         // GET: Comments/Create
         public IActionResult Create()
         {
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id");
-            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id");
+            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id");
+            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id");
             return View();
         }
 
@@ -64,13 +64,13 @@ namespace BlogPosts.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
+                this.context.Add(comment);
+                await this.context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
+            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
+            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -82,14 +82,14 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment.FindAsync(id);
+            var comment = await this.context.Comment.FindAsync(id);
             if (comment == null)
             {
                 return NotFound();
             }
 
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
+            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
+            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -113,8 +113,8 @@ namespace BlogPosts.Controllers
             {
                 try
                 {
-                    _context.Update(comment);
-                    await _context.SaveChangesAsync();
+                    this.context.Update(comment);
+                    await this.context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -131,8 +131,8 @@ namespace BlogPosts.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AuthorId"] = new SelectList(_context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(_context.Set<Post>(),     "Id", "Id", comment.PostId);
+            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
+            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
             return View(comment);
         }
 
@@ -144,10 +144,10 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comment
-                                        .Include(c => c.Author)
-                                        .Include(c => c.Post)
-                                        .FirstOrDefaultAsync(m => m.Id == id);
+            var comment = await this.context.Comment
+                                    .Include(c => c.Author)
+                                    .Include(c => c.Post)
+                                    .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -160,15 +160,15 @@ namespace BlogPosts.Controllers
         [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var comment = await _context.Comment.FindAsync(id);
-            _context.Comment.Remove(comment);
-            await _context.SaveChangesAsync();
+            var comment = await this.context.Comment.FindAsync(id);
+            this.context.Comment.Remove(comment);
+            await this.context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CommentExists(int id)
         {
-            return _context.Comment.Any(e => e.Id == id);
+            return this.context.Comment.Any(e => e.Id == id);
         }
     }
 }

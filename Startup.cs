@@ -1,6 +1,6 @@
 using BlogPosts.Data;
-using BlogPosts.Helpers;
 using BlogPosts.Models;
+using Npgsql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,10 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+
+
 namespace BlogPosts
 {
-    using System;
-    using System.Threading.Tasks;
 
     public class Startup
     {
@@ -24,12 +24,33 @@ namespace BlogPosts
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+
+        private string GetConnectionString()
+        {
+            var config = new PostgreSqlConnnection();
+            var dbUrl = Configuration["DATABASE_URL"];
+            if (string.IsNullOrEmpty(dbUrl))
+            {
+                Configuration.Bind("PostgreSQL", config);
+            }
+            else
+            {
+                var dbUrlData = dbUrl.Split(":");
+                config.Server = dbUrlData[2].Split("@")[1];
+                config.Port = dbUrlData[3].Split("/")[0];
+                config.Database = dbUrlData[3].Split("/")[1];
+                config.UserId = dbUrlData[1].TrimStart('/');
+                config.Password = dbUrlData[2].Split("@")[0];
+            }
+
+            string connString = $"Server={config.Server};Port={config.Port};Database={config.Database};User Id={config.UserId};Password={config.Password}";
+
+            return connString;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                                                            options.UseSqlServer(
-                                                             Configuration
-                                                                 .GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(GetConnectionString()));
 
             services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -39,24 +60,24 @@ namespace BlogPosts
 
         }
 
-/*
-        public async Task ConfigureAsync(IApplicationBuilder app, IWebHostEnvironment env, Seeder seedHelper)
-        {
-            if (seedHelper is null) throw new ArgumentNullException(nameof(seedHelper));
-            await Seeder.SeedDataAsync().ConfigureAwait(false);
+        /*
+                public async Task ConfigureAsync(IApplicationBuilder app, IWebHostEnvironment env, Seeder seedHelper)
+                {
+                    if (seedHelper is null) throw new ArgumentNullException(nameof(seedHelper));
+                    await Seeder.SeedDataAsync().ConfigureAwait(false);
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+                    if (env.IsDevelopment())
+                    {
+                        app.UseDeveloperExceptionPage();
+                        app.UseDatabaseErrorPage();
+                    }
+                    else
+                    {
+                        app.UseExceptionHandler("/Home/Error");
+                    }
 
-        }
-*/
+                }
+        */
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

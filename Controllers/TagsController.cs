@@ -12,17 +12,17 @@ namespace BlogPosts.Controllers
 {
     public class TagsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         public TagsController(ApplicationDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: Tags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tag.ToListAsync());
+            return View(await this.context.Tag.ToListAsync());
         }
 
         // GET: Tags/Details/5
@@ -33,8 +33,8 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                                    .FirstOrDefaultAsync(m => m.Id == id);
+            var tag = await this.context.Tag
+                                .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -56,8 +56,8 @@ namespace BlogPosts.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tag);
-                await _context.SaveChangesAsync();
+                this.context.Add(tag);
+                await this.context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -72,7 +72,7 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag.FindAsync(id);
+            var tag = await this.context.Tag.FindAsync(id);
             if (tag == null)
             {
                 return NotFound();
@@ -95,8 +95,8 @@ namespace BlogPosts.Controllers
             {
                 try
                 {
-                    _context.Update(tag);
-                    await _context.SaveChangesAsync();
+                    this.context.Update(tag);
+                    await this.context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,8 +124,8 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag
-                                    .FirstOrDefaultAsync(m => m.Id == id);
+            var tag = await this.context.Tag
+                                .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -138,15 +138,15 @@ namespace BlogPosts.Controllers
         [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tag = await _context.Tag.FindAsync(id);
-            _context.Tag.Remove(tag);
-            await _context.SaveChangesAsync();
+            var tag = await this.context.Tag.FindAsync(id);
+            this.context.Tag.Remove(tag);
+            await this.context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TagExists(int id)
         {
-            return _context.Tag.Any(e => e.Id == id);
+            return this.context.Tag.Any(e => e.Id == id);
         }
     }
 }

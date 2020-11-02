@@ -12,17 +12,17 @@ namespace BlogPosts.Controllers
 {
     public class BlogsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
         public BlogsController(ApplicationDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Blog.ToListAsync());
+            return View(await this.context.Blog.ToListAsync());
         }
 
         // GET: Blogs/Details/5
@@ -33,8 +33,8 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blog
-                                     .FirstOrDefaultAsync(m => m.Id == id);
+            var blog = await this.context.Blog
+                                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
@@ -56,8 +56,8 @@ namespace BlogPosts.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
+                this.context.Add(blog);
+                await this.context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -72,7 +72,7 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blog.FindAsync(id);
+            var blog = await this.context.Blog.FindAsync(id);
             if (blog == null)
             {
                 return NotFound();
@@ -96,8 +96,8 @@ namespace BlogPosts.Controllers
             {
                 try
                 {
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    this.context.Update(blog);
+                    await this.context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,8 +125,8 @@ namespace BlogPosts.Controllers
                 return NotFound();
             }
 
-            var blog = await _context.Blog
-                                     .FirstOrDefaultAsync(m => m.Id == id);
+            var blog = await this.context.Blog
+                                 .FirstOrDefaultAsync(m => m.Id == id);
             if (blog == null)
             {
                 return NotFound();
@@ -139,15 +139,15 @@ namespace BlogPosts.Controllers
         [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blog = await _context.Blog.FindAsync(id);
-            _context.Blog.Remove(blog);
-            await _context.SaveChangesAsync();
+            var blog = await this.context.Blog.FindAsync(id);
+            this.context.Blog.Remove(blog);
+            await this.context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BlogExists(int id)
         {
-            return _context.Blog.Any(e => e.Id == id);
+            return this.context.Blog.Any(e => e.Id == id);
         }
     }
 }

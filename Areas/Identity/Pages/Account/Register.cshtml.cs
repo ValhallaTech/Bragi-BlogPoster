@@ -18,10 +18,10 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 {
     [AllowAnonymous] public class RegisterModel : PageModel
     {
-        private readonly SignInManager<BlogUser> _signInManager;
-        private readonly UserManager<BlogUser>   _userManager;
-        private readonly ILogger<RegisterModel>  _logger;
-        private readonly IEmailSender            _emailSender;
+        private readonly SignInManager<BlogUser> signInManager;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly ILogger<RegisterModel>  logger;
+        private readonly IEmailSender            emailSender;
 
         public RegisterModel(
             UserManager<BlogUser>   userManager,
@@ -29,10 +29,10 @@ namespace BlogPosts.Areas.Identity.Pages.Account
             ILogger<RegisterModel>  logger,
             IEmailSender            emailSender)
         {
-            _userManager   = userManager;
-            _signInManager = signInManager;
-            _logger        = logger;
-            _emailSender   = emailSender;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
+            this.logger        = logger;
+            this.emailSender   = emailSender;
         }
 
         [BindProperty] public InputModel Input { get; set; }
@@ -79,13 +79,13 @@ namespace BlogPosts.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl      = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl      = returnUrl ?? Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
                 var user = new BlogUser
@@ -97,12 +97,12 @@ namespace BlogPosts.Areas.Identity.Pages.Account
                                Email       = Input.Email
                            };
 
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await this.userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    this.logger.LogInformation("User created a new account with password.");
 
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var code = await this.userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
                                                "/Account/ConfirmEmail",
@@ -114,15 +114,15 @@ namespace BlogPosts.Areas.Identity.Pages.Account
                                                        },
                                                protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                                                      $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    await this.emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                                                          $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    if (this.userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new {email = Input.Email, returnUrl = returnUrl});
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await this.signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }
