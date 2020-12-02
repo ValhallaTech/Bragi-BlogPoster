@@ -1,7 +1,10 @@
 ﻿@page
+@using BlogPosts.Areas.Identity.Pages.Account
 @model RegisterModel
 @{
     ViewData["Title"] = "Register";
+
+
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -92,7 +95,7 @@
                           method = "post" >
                         <div>
                             <p>
-                                @foreach (var provider in Model.ExternalLogins)
+                                @foreach (AuthenticationScheme provider in Model.ExternalLogins)
                                 {
                                     <button class = "btn btn-primary"
                                             name = "provider"
@@ -106,6 +109,7 @@
                         </div>
                     </form>
                 }
+
             }
         </section>
     </div>

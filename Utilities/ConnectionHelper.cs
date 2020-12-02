@@ -1,6 +1,6 @@
-﻿namespace BlogPosts.Models
+﻿namespace BlogPosts.Utilities
 {
-    public class PostgreSqlConnection
+    public class ConnectionHelper
     {
         public string Server { get; set; }
 

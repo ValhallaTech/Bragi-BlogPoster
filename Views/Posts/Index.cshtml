@@ -1,7 +1,8 @@
-﻿@model IEnumerable<BlogPosts.Models.Post>
+﻿@model IEnumerable<Post>
 
 @{
     ViewData["Title"] = "Index";
+
 }
 
 <h1>Index</h1>
@@ -37,7 +38,7 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
+    @foreach (Post item in Model)
     {
         <tr>
             <td>

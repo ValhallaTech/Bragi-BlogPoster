@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using BlogPosts.Data;
+using BlogPosts.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BlogPosts.Data;
-using BlogPosts.Models;
-using System.Security.Claims;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace BlogPosts.Controllers
 {
@@ -15,160 +13,168 @@ namespace BlogPosts.Controllers
     {
         private readonly ApplicationDbContext context;
 
-        public CommentsController(ApplicationDbContext context)
-        {
-            this.context = context;
-        }
+        public CommentsController( ApplicationDbContext context ) => this.context = context;
 
         // GET: Comments
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( )
         {
-            var applicationDbContext = this.context.Comment.Include(c => c.Author).Include(c => c.Post);
-            return View(await applicationDbContext.ToListAsync());
+            IIncludableQueryable<Comment, Post> applicationDbContext =
+                this.context.Comment.Include( c => c.Author ).Include( c => c.Post );
+
+            return this.View( await applicationDbContext.ToListAsync( ).ConfigureAwait( false ) );
         }
 
         // GET: Comments/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details( int? id )
         {
-            if (id == null)
+            if ( id == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            var comment = await this.context.Comment
-                                    .Include(c => c.Author)
-                                    .Include(c => c.Post)
-                                    .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
+            Comment comment = await this.context.Comment.Include( c => c.Author )
+                                        .Include( c => c.Post )
+                                        .FirstOrDefaultAsync( m => m.Id == id )
+                                        .ConfigureAwait( false );
+
+            if ( comment == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            return View(comment);
+            return this.View( comment );
         }
 
         // GET: Comments/Create
-        public IActionResult Create()
+        public IActionResult Create( )
         {
-            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id");
-            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id");
-            return View();
+            this.ViewData["AuthorId"] = new SelectList( this.context.Set<BlogUser>( ), "Id", "Id" );
+            this.ViewData["PostId"]   = new SelectList( this.context.Set<Post>( ),     "Id", "Id" );
+
+            return this.View( );
         }
 
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Create(
-            [Bind("Id,PostId,AuthorId,Content,Created,Updated")]
-            Comment comment)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            [Bind( "Id,PostId,AuthorId,Content,Created,Updated" )]
+            Comment comment )
         {
-            if (ModelState.IsValid)
+            if ( this.ModelState.IsValid )
             {
-                this.context.Add(comment);
-                await this.context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await this.context.AddAsync( comment ).ConfigureAwait(false);
+                await this.context.SaveChangesAsync( ).ConfigureAwait( false );
+
+                return this.RedirectToAction( nameof( this.Index ) );
             }
 
-            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
-            return View(comment);
+            this.ViewData["AuthorId"] = new SelectList( this.context.Set<BlogUser>( ), "Id", "Id", comment.AuthorId );
+            this.ViewData["PostId"]   = new SelectList( this.context.Set<Post>( ),     "Id", "Id", comment.PostId );
+
+            return this.View( comment );
         }
 
         // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit( int? id )
         {
-            if (id == null)
+            if ( id == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            var comment = await this.context.Comment.FindAsync(id);
-            if (comment == null)
+            Comment comment = await this.context.Comment.FindAsync( id ).ConfigureAwait( false );
+
+            if ( comment == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
-            return View(comment);
+            this.ViewData["AuthorId"] = new SelectList( this.context.Set<BlogUser>( ), "Id", "Id", comment.AuthorId );
+            this.ViewData["PostId"]   = new SelectList( this.context.Set<Post>( ),     "Id", "Id", comment.PostId );
+
+            return this.View( comment );
         }
 
         // POST: Comments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost] [ValidateAntiForgeryToken] public async Task<IActionResult> Edit(
-            int id, [Bind("Id,PostId,AuthorId,Content,Created,Updated")]
-            Comment comment)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind( "Id,PostId,AuthorId,Content,Created,Updated" )]
+            Comment comment )
         {
-            if (ModelState.IsValid)
+            if ( this.ModelState.IsValid )
             {
             }
 
-            if (id != comment.Id)
+            if ( id != comment.Id )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            if (ModelState.IsValid)
+            if ( this.ModelState.IsValid )
             {
                 try
                 {
-                    this.context.Update(comment);
-                    await this.context.SaveChangesAsync();
+                    this.context.Update( comment );
+                    await this.context.SaveChangesAsync( ).ConfigureAwait( false );
                 }
-                catch (DbUpdateConcurrencyException)
+                catch ( DbUpdateConcurrencyException ) when ( !this.CommentExists( comment.Id ) )
                 {
-                    if (!CommentExists(comment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return this.NotFound( );
                 }
 
-                return RedirectToAction(nameof(Index));
+                return this.RedirectToAction( nameof( this.Index ) );
             }
 
-            ViewData["AuthorId"] = new SelectList(this.context.Set<BlogUser>(), "Id", "Id", comment.AuthorId);
-            ViewData["PostId"]   = new SelectList(this.context.Set<Post>(),     "Id", "Id", comment.PostId);
-            return View(comment);
+            this.ViewData["AuthorId"] = new SelectList( this.context.Set<BlogUser>( ), "Id", "Id", comment.AuthorId );
+            this.ViewData["PostId"]   = new SelectList( this.context.Set<Post>( ),     "Id", "Id", comment.PostId );
+
+            return this.View( comment );
         }
 
         // GET: Comments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete( int? id )
         {
-            if (id == null)
+            if ( id == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            var comment = await this.context.Comment
-                                    .Include(c => c.Author)
-                                    .Include(c => c.Post)
-                                    .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
+            Comment comment = await this.context.Comment.Include( c => c.Author )
+                                        .Include( c => c.Post )
+                                        .FirstOrDefaultAsync( m => m.Id == id )
+                                        .ConfigureAwait( false );
+
+            if ( comment == null )
             {
-                return NotFound();
+                return this.NotFound( );
             }
 
-            return View(comment);
+            return this.View( comment );
         }
 
         // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")] [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpPost]
+        [ActionName( "Delete" )]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed( int id )
         {
-            var comment = await this.context.Comment.FindAsync(id);
-            this.context.Comment.Remove(comment);
-            await this.context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            Comment comment = await this.context.Comment.FindAsync( id ).ConfigureAwait( false );
+            this.context.Comment.Remove( comment );
+            await this.context.SaveChangesAsync( ).ConfigureAwait( false );
+
+            return this.RedirectToAction( nameof( this.Index ) );
         }
 
-        private bool CommentExists(int id)
+        private bool CommentExists( int id )
         {
-            return this.context.Comment.Any(e => e.Id == id);
+            return this.context.Comment.Any( e => e.Id == id );
         }
     }
 }

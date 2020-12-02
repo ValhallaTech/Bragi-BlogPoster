@@ -1,61 +1,60 @@
-﻿using BlogPosts.Enums;
+﻿using System.Threading.Tasks;
+using BlogPosts.Enums;
 using BlogPosts.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 
 namespace BlogPosts.Helpers
 {
     public static class Seeder
     {
-        public static async Task SeedDataAsync(UserManager<BlogUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedDataAsync(
+            UserManager<BlogUser>     userManager,
+            RoleManager<IdentityRole> roleManager )
         {
-            await SeedRoles(roleManager);
-            await SeedAdmin(userManager);
-            await SeedModerator(userManager);
+            await SeedRolesAsync( roleManager ).ConfigureAwait( false );
+            await SeedAdminAsync( userManager ).ConfigureAwait( false );
+            await SeedModeratorAsync( userManager ).ConfigureAwait( false );
         }
 
-        private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+        private static async Task SeedRolesAsync( RoleManager<IdentityRole> roleManager )
         {
-            await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Moderator.ToString()));
+            await roleManager.CreateAsync( new IdentityRole( nameof( Roles.Admin ) ) ).ConfigureAwait( false );
+            await roleManager.CreateAsync( new IdentityRole( nameof( Roles.Moderator ) ) ).ConfigureAwait( false );
         }
 
-        private static async Task SeedAdmin(UserManager<BlogUser> userManager)
+        private static async Task SeedAdminAsync( UserManager<BlogUser> userManager )
         {
-            if (await userManager.FindByEmailAsync("valhallatechnc@gmail.com") == null)
-
+            if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
-                var admin = new BlogUser()
-                                {
-                                    Email          = "valhallatechnc@gmail.com",
-                                    UserName       = "valhallatechnc@gmail.com",
-                                    FirstName      = "Fred",
-                                    LastName       = "Smith",
-                                    EmailConfirmed = true
-                                };
+                BlogUser admin = new BlogUser( )
+                                 {
+                                     Email          = "valhallatechtest+administrator@gmail.com",
+                                     UserName       = "valhallatechtest+administrator@gmail.com",
+                                     FirstName      = "Fred",
+                                     LastName       = "Smith",
+                                     EmailConfirmed = true
+                                 };
 
-                await userManager.CreateAsync(admin, "Abc&123!");
-                await userManager.AddToRoleAsync(admin, Roles.Admin.ToString());
+                await userManager.CreateAsync( admin, "Abc&123!" ).ConfigureAwait( false );
+                await userManager.AddToRoleAsync( admin, nameof( Roles.Admin ) ).ConfigureAwait( false );
             }
         }
 
-        private static async Task SeedModerator(UserManager<BlogUser> userManager)
+        private static async Task SeedModeratorAsync( UserManager<BlogUser> userManager )
         {
-            if (await userManager.FindByEmailAsync("smith.fred@yahoo.com") == null)
+            if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
-                var moderator = new BlogUser()
-                                    {
-                                        Email          = "smith.fred@yahoo.com",
-                                        UserName       = "smith.fred@yahoo.com",
-                                        FirstName      = "Fred",
-                                        LastName       = "Smith",
-                                        EmailConfirmed = true
-                                    };
-                await userManager.CreateAsync(moderator, "Abc&123!");
-                await userManager.AddToRoleAsync(moderator, Roles.Moderator.ToString());
+                BlogUser moderator = new BlogUser( )
+                                     {
+                                         Email          = "valhallatechtest+projectmanager@gmail.com",
+                                         UserName       = "valhallatechtest+projectmanager@gmail.com",
+                                         FirstName      = "Fred",
+                                         LastName       = "Smith",
+                                         EmailConfirmed = true
+                                     };
+                await userManager.CreateAsync( moderator, "Abc&123!" ).ConfigureAwait( false );
+                await userManager.AddToRoleAsync( moderator, nameof( Roles.Moderator ) ).ConfigureAwait( false );
             }
         }
     }
 }
-
-
