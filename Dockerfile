@@ -6,7 +6,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /src
 COPY ["BlogPosts.csproj", ""]
-RUN dotnet restore "./Postgres_Demo.csproj"
+RUN dotnet restore "./BlogPosts.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "BlogPosts.csproj" -c Release -o /app/build
