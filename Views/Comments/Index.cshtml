@@ -26,7 +26,7 @@
             @Html.DisplayNameFor(model => model.Post)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Author)
+            @Html.DisplayNameFor(model => model.BlogUser)
         </th>
         <th></th>
     </tr>
@@ -48,7 +48,7 @@
                 @Html.DisplayFor(modelItem => item.Post.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Author.Id)
+                @Html.DisplayFor(modelItem => item.BlogUser.Id)
             </td>
             <td>
                 <a asp-action = "Edit"

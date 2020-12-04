@@ -9,7 +9,7 @@ namespace BlogPosts.Models.ViewModels
         // The entire Post model and all of its information
         public ICollection<Post> Posts { get; set; }
 
-        public List<string> Tags { get; set; }
+        public ICollection<Tag> Tags { get; set; }
 
         public int PageNum { get; set; }
 

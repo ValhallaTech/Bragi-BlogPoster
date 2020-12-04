@@ -12,9 +12,9 @@ namespace BlogPosts.Utilities
         {
             string  binary       = Convert.ToBase64String( post.Image );
             string? ext          = Path.GetExtension( post.FileName );
-            string  imageDataURL = $"data:image/{ext};base64,{binary}";
+            string  imageDataUrl = $"data:image/{ext};base64,{binary}";
 
-            return imageDataURL;
+            return imageDataUrl;
         }
 
         // This method helps me encode the image

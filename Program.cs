@@ -15,7 +15,7 @@ namespace BlogPosts
         public static async Task Main( string[] args )
         {
             IHost host = CreateHostBuilder( args ).Build( );
-            await PostgreHelper.ManageData( host ).ConfigureAwait( false );
+            await PostgreHelper.ManageDataAsync( host ).ConfigureAwait( false );
             await SeedDataAsync( host ).ConfigureAwait( false );
             await host.RunAsync( ).ConfigureAwait( false );
         }

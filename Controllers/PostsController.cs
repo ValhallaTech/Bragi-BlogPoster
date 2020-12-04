@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Z.EntityFramework.Plus;
 
 namespace BlogPosts.Controllers
 {
@@ -59,7 +60,7 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Post post = await this.context.Post.Include( p => p.Blog )
+            Post post = await this.context.Post.IncludeOptimized( p => p.Blog )
                                   .FirstOrDefaultAsync( m => m.Id == id )
                                   .ConfigureAwait( false );
 
@@ -202,7 +203,7 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Post post = await this.context.Post.Include( p => p.Blog )
+            Post post = await this.context.Post.IncludeOptimized( p => p.Blog )
                                   .FirstOrDefaultAsync( m => m.Id == id )
                                   .ConfigureAwait( false );
 

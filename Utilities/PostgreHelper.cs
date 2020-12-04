@@ -41,7 +41,7 @@ namespace BlogPosts.Utilities
             return builder.ToString( );
         }
 
-        public static async Task ManageData( IHost host )
+        public static async Task ManageDataAsync( IHost host )
         {
             try
             {

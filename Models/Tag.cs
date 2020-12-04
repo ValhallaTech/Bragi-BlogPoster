@@ -4,8 +4,10 @@
     {
         public int Id { get; set; }
 
+        public int PostId { get; set; }
+
         public string Name { get; set; }
 
-        public string Post { get; set; }
+        public virtual Post Post { get; set; }
     }
 }

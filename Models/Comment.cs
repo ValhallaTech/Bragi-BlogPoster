@@ -8,16 +8,16 @@ namespace BlogPosts.Models
 
         public int PostId { get; set; }
 
-        public string AuthorId { get; set; }
+        public string BlogUserId { get; set; }
 
         public string Content { get; set; }
 
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
-        public DateTime? Updated { get; set; }
+        public DateTimeOffset? Updated { get; set; }
 
         public Post Post { get; set; }
 
-        public virtual BlogUser Author { get; set; }
+        public virtual BlogUser BlogUser { get; set; }
     }
 }

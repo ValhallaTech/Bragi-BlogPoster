@@ -17,9 +17,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="Npgsql" Version="4.1.5" />
+    <PackageReference Include="Npgsql" Version="4.1.6" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
-    <PackageReference Include="TinyMCE" Version="5.5.1" />
+    <PackageReference Include="TinyMCE" Version="5.6.1" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.1.5" />
   </ItemGroup>
 
 </Project>

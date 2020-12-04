@@ -114,5 +114,5 @@
 <script>tinymce.init ( { selector: 'textarea' } );</script>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial").ConfigureAwait(false); }
 }

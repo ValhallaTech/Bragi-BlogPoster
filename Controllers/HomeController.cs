@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using BlogPosts.Data;
 using BlogPosts.Models;
 using BlogPosts.Models.ViewModels;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
+using Z.EntityFramework.Plus;
 
-namespace MVCBlog.Controllers
+namespace BlogPosts.Controllers
 {
     public class HomeController : Controller
     {
@@ -48,11 +40,11 @@ namespace MVCBlog.Controllers
 
             IQueryable<Post> posts = this.context.Post.Where( p => p.IsPublished )
                                          .OrderByDescending( p => p.CreatedDateTime )
-                                         .Include( p => p.Blog )
+                                         .IncludeOptimized( p => p.Blog )
                                          .Skip( page * 5 )
                                          .Take( 5 );
             DbSet<Blog> blogs = this.context.Blog;
-            var     tags  = this.context.Tag;
+            DbSet<Tag>  tags  = this.context.Tags;
             CategoryViewModel categories = new CategoryViewModel( )
                                            {
                                                Blogs      = await blogs.ToListAsync( ).ConfigureAwait( false ),
@@ -69,7 +61,7 @@ namespace MVCBlog.Controllers
         {
             IQueryable<Post> posts = from p in this.context.Post select p;
             DbSet<Blog>      blogs = this.context.Blog;
-            var              tags  = this.context.Tag;
+            DbSet<Tag>       tags  = this.context.Tags;
 
             if ( !string.IsNullOrEmpty( searchString ) )
             {
@@ -78,10 +70,10 @@ namespace MVCBlog.Controllers
                                       || p.Abstract.Contains( searchString )
                                       || p.Content.Contains( searchString ) );
 
-                // return View("Index", await posts.Include(p => p.Blog).ToListAsync());
+                // return View("Index", await posts.IncludeOptimized(p => p.Blog).ToListAsync());
             }
 
-            // return View("Index", await posts.Include(p => p.Blog).ToListAsync());
+            // return View("Index", await posts.IncludeOptimized(p => p.Blog).ToListAsync());
             CategoryViewModel categories = new CategoryViewModel( )
                                            {
                                                Blogs = await blogs.ToListAsync( ).ConfigureAwait( false ),
@@ -95,7 +87,10 @@ namespace MVCBlog.Controllers
         public async Task<IActionResult> Categories( )
         {
             string? id = RouteData.Values["id"].ToString( );
-            IIncludableQueryable<Post, Blog> posts = this.context.Post.Where( p => p.BlogId == int.Parse( id ) && p.IsPublished == true )
+            IIncludableQueryable<Post, Blog> posts = this.context.Post
+                                                         .Where(
+                                                                p => p.BlogId      == int.Parse( id )
+                                                                  && p.IsPublished == true )
                                                          .Include( p => p.Blog );
             DbSet<Blog> blogs = this.context.Blog;
             DbSet<Tag>  tags  = this.context.Tags;
@@ -111,15 +106,13 @@ namespace MVCBlog.Controllers
 
         public async Task<IActionResult> Tag( )
         {
-            string?            name  = RouteData.Values["id"].ToString( );
-            IQueryable<string> tags  = this.context.Tags.Where( t => t.Name == name ).Select( t => t.Post );
-            DbSet<Post>        posts = this.context.Post;
-            DbSet<Blog>        blogs = this.context.Blog;
+            string?          name  = RouteData.Values["id"].ToString( );
+            IQueryable<Post> posts = this.context.Tags.Where( t => t.Name == name ).Select( t => t.Post );
+            DbSet<Blog>      blogs = this.context.Blog;
             CategoryViewModel categories = new CategoryViewModel( )
                                            {
                                                Blogs = await blogs.ToListAsync( ).ConfigureAwait( false ),
                                                Posts = await posts.ToListAsync( ).ConfigureAwait( false ),
-                                               Tags  = await tags.ToListAsync( ).ConfigureAwait( false )
                                            };
 
             return this.View( "Index", categories );

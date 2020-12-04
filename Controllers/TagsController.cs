@@ -15,7 +15,7 @@ namespace BlogPosts.Controllers
 
         // GET: Tags
         public async Task<IActionResult> Index( ) =>
-            this.View( await this.context.Tag.ToListAsync( ).ConfigureAwait( false ) );
+            this.View( await this.context.Tags.ToListAsync( ).ConfigureAwait( false ) );
 
         // GET: Tags/Details/5
         public async Task<IActionResult> Details( int? id )
@@ -25,7 +25,7 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Tag tag = await this.context.Tag.FirstOrDefaultAsync( m => m.Id == id ).ConfigureAwait( false );
+            Tag tag = await this.context.Tags.FirstOrDefaultAsync( m => m.Id == id ).ConfigureAwait( false );
 
             if ( tag == null )
             {
@@ -47,7 +47,7 @@ namespace BlogPosts.Controllers
         {
             if ( this.ModelState.IsValid )
             {
-                await this.context.AddAsync( tag ).ConfigureAwait(false);
+                await this.context.AddAsync( tag ).ConfigureAwait( false );
                 await this.context.SaveChangesAsync( ).ConfigureAwait( false );
 
                 return this.RedirectToAction( nameof( this.Index ) );
@@ -64,7 +64,7 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Tag tag = await this.context.Tag.FindAsync( id ).ConfigureAwait( false );
+            Tag tag = await this.context.Tags.FindAsync( id ).ConfigureAwait( false );
 
             if ( tag == null )
             {
@@ -112,7 +112,7 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Tag tag = await this.context.Tag.FirstOrDefaultAsync( m => m.Id == id ).ConfigureAwait( false );
+            Tag tag = await this.context.Tags.FirstOrDefaultAsync( m => m.Id == id ).ConfigureAwait( false );
 
             if ( tag == null )
             {
@@ -128,8 +128,8 @@ namespace BlogPosts.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed( int id )
         {
-            Tag tag = await this.context.Tag.FindAsync( id ).ConfigureAwait( false );
-            this.context.Tag.Remove( tag );
+            Tag tag = await this.context.Tags.FindAsync( id ).ConfigureAwait( false );
+            this.context.Tags.Remove( tag );
             await this.context.SaveChangesAsync( ).ConfigureAwait( false );
 
             return this.RedirectToAction( nameof( this.Index ) );
@@ -137,7 +137,7 @@ namespace BlogPosts.Controllers
 
         private bool TagExists( int id )
         {
-            return this.context.Tag.Any( e => e.Id == id );
+            return this.context.Tags.Any( e => e.Id == id );
         }
     }
 }

@@ -22,11 +22,11 @@ namespace BlogPosts
             ConfigureServices(
                 IServiceCollection services )
         {
-            // Remember Dependencies Injection is set up here in the configureServices
+            // Remember Dependency Injection is set up here in the configureServices
             // 1. services are configured for using DbContext
             services.AddDbContext<ApplicationDbContext>(
                                                         options =>
-                                                            options.UseNpgsql( // switched from defualt, to use NPGSql
+                                                            options.UseNpgsql( // switched from default, to use NPGSql
                                                                               PostgreHelper.GetConnectionString(
                                                                                this.Configuration ) ) );
 

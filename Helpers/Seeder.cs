@@ -16,13 +16,13 @@ namespace BlogPosts.Helpers
             await SeedModeratorAsync( userManager ).ConfigureAwait( false );
         }
 
-        private static async Task SeedRolesAsync( RoleManager<IdentityRole> roleManager )
+        public static async Task SeedRolesAsync( RoleManager<IdentityRole> roleManager )
         {
-            await roleManager.CreateAsync( new IdentityRole( nameof( Roles.Admin ) ) ).ConfigureAwait( false );
+            await roleManager.CreateAsync( new IdentityRole( nameof( Roles.Administrator ) ) ).ConfigureAwait( false );
             await roleManager.CreateAsync( new IdentityRole( nameof( Roles.Moderator ) ) ).ConfigureAwait( false );
         }
 
-        private static async Task SeedAdminAsync( UserManager<BlogUser> userManager )
+        public static async Task SeedAdminAsync( UserManager<BlogUser> userManager )
         {
             if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
@@ -36,11 +36,11 @@ namespace BlogPosts.Helpers
                                  };
 
                 await userManager.CreateAsync( admin, "Abc&123!" ).ConfigureAwait( false );
-                await userManager.AddToRoleAsync( admin, nameof( Roles.Admin ) ).ConfigureAwait( false );
+                await userManager.AddToRoleAsync( admin, nameof( Roles.Administrator ) ).ConfigureAwait( false );
             }
         }
 
-        private static async Task SeedModeratorAsync( UserManager<BlogUser> userManager )
+        public static async Task SeedModeratorAsync( UserManager<BlogUser> userManager )
         {
             if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
@@ -48,8 +48,8 @@ namespace BlogPosts.Helpers
                                      {
                                          Email          = "valhallatechtest+projectmanager@gmail.com",
                                          UserName       = "valhallatechtest+projectmanager@gmail.com",
-                                         FirstName      = "Fred",
-                                         LastName       = "Smith",
+                                         FirstName      = "Bill",
+                                         LastName       = "Williams",
                                          EmailConfirmed = true
                                      };
                 await userManager.CreateAsync( moderator, "Abc&123!" ).ConfigureAwait( false );

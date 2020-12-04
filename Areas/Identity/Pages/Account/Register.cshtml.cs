@@ -55,7 +55,7 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 
             [Required]
             [StringLength(
-                             100,
+                             40,
                              ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
                              MinimumLength = 8 )]
             [DataType( DataType.Password )]
@@ -64,7 +64,7 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 
             [Required]
             [StringLength(
-                             50,
+                             40,
                              ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
                              MinimumLength = 2 )]
             [Display( Name = "First Name" )]
@@ -72,7 +72,7 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 
             [Required]
             [StringLength(
-                             50,
+                             40,
                              ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
                              MinimumLength = 2 )]
             [Display( Name = "Last Name" )]
