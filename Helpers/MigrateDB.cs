@@ -1,7 +1,9 @@
-﻿using System;
+﻿// Deprecated
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BlogPosts.Data;
+using BragirBlogPoster.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -9,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
-namespace BlogPosts.Helpers
+namespace BragirBlogPoster.Helpers
 {
     public static class MigrateDb
     {
@@ -17,10 +19,11 @@ namespace BlogPosts.Helpers
         {
             try
             {
-                using IServiceScope scope = host.Services.CreateScope( );
+                using IServiceScope        scope   = host.Services.CreateScope( );
                 using ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>( );
 
                 List<string> pendingMigrations = context.Database.GetPendingMigrations( ).ToList( );
+
                 if ( pendingMigrations.Count > 0 )
                 {
                     IMigrator migrator = context.Database.GetService<IMigrator>( );

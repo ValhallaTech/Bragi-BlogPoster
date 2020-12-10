@@ -1,16 +1,17 @@
-﻿using System.Diagnostics;
+﻿#nullable enable
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using BlogPosts.Data;
-using BlogPosts.Models;
-using BlogPosts.Models.ViewModels;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
+using BragirBlogPoster.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
 
-namespace BlogPosts.Controllers
+namespace BragirBlogPoster.Controllers
 {
     public class HomeController : Controller
     {
@@ -45,7 +46,7 @@ namespace BlogPosts.Controllers
                                          .Take( 5 );
             DbSet<Blog> blogs = this.context.Blog;
             DbSet<Tag>  tags  = this.context.Tags;
-            CategoryViewModel categories = new CategoryViewModel( )
+            CategoryViewModel categories = new CategoryViewModel
                                            {
                                                Blogs      = await blogs.ToListAsync( ).ConfigureAwait( false ),
                                                Posts      = await posts.ToListAsync( ).ConfigureAwait( false ),
@@ -54,14 +55,16 @@ namespace BlogPosts.Controllers
                                                TotalPosts = this.context.Post.ToList( ).Count
                                            };
 
-            return View( categories );
+            return this.View( categories );
         }
 
         public async Task<IActionResult> Results( string searchString )
         {
-            IQueryable<Post> posts = from p in this.context.Post select p;
-            DbSet<Blog>      blogs = this.context.Blog;
-            DbSet<Tag>       tags  = this.context.Tags;
+            IQueryable<Post> posts =
+                from p in this.context.Post
+                select p;
+            DbSet<Blog> blogs = this.context.Blog;
+            DbSet<Tag>  tags  = this.context.Tags;
 
             if ( !string.IsNullOrEmpty( searchString ) )
             {
@@ -69,12 +72,12 @@ namespace BlogPosts.Controllers
                                     p => p.Title.Contains( searchString )
                                       || p.Abstract.Contains( searchString )
                                       || p.Content.Contains( searchString ) );
-
-                // return View("Index", await posts.IncludeOptimized(p => p.Blog).ToListAsync());
             }
 
             // return View("Index", await posts.IncludeOptimized(p => p.Blog).ToListAsync());
-            CategoryViewModel categories = new CategoryViewModel( )
+
+            // return View("Index", await posts.IncludeOptimized(p => p.Blog).ToListAsync());
+            CategoryViewModel categories = new CategoryViewModel
                                            {
                                                Blogs = await blogs.ToListAsync( ).ConfigureAwait( false ),
                                                Posts = await posts.ToListAsync( ).ConfigureAwait( false ),
@@ -86,15 +89,14 @@ namespace BlogPosts.Controllers
 
         public async Task<IActionResult> Categories( )
         {
-            string? id = RouteData.Values["id"].ToString( );
+            string? id = this.RouteData.Values["id"].ToString( );
             IIncludableQueryable<Post, Blog> posts = this.context.Post
-                                                         .Where(
-                                                                p => p.BlogId      == int.Parse( id )
-                                                                  && p.IsPublished == true )
-                                                         .Include( p => p.Blog );
+                                                         .Where( p => p.BlogId == int.Parse( id ) && p.IsPublished )
+                                                         .IncludeOptimized( p => p.Blog ) as
+                                                         IIncludableQueryable<Post, Blog>;
             DbSet<Blog> blogs = this.context.Blog;
             DbSet<Tag>  tags  = this.context.Tags;
-            CategoryViewModel categories = new CategoryViewModel( )
+            CategoryViewModel categories = new CategoryViewModel
                                            {
                                                Blogs = await blogs.ToListAsync( ).ConfigureAwait( false ),
                                                Posts = await posts.ToListAsync( ).ConfigureAwait( false ),
@@ -106,27 +108,22 @@ namespace BlogPosts.Controllers
 
         public async Task<IActionResult> Tag( )
         {
-            string?          name  = RouteData.Values["id"].ToString( );
+            string?          name  = this.RouteData.Values["id"].ToString( );
             IQueryable<Post> posts = this.context.Tags.Where( t => t.Name == name ).Select( t => t.Post );
             DbSet<Blog>      blogs = this.context.Blog;
-            CategoryViewModel categories = new CategoryViewModel( )
+            CategoryViewModel categories = new CategoryViewModel
                                            {
                                                Blogs = await blogs.ToListAsync( ).ConfigureAwait( false ),
-                                               Posts = await posts.ToListAsync( ).ConfigureAwait( false ),
+                                               Posts = await posts.ToListAsync( ).ConfigureAwait( false )
                                            };
 
             return this.View( "Index", categories );
         }
 
-        public IActionResult Privacy( )
-        {
-            return this.View( );
-        }
+        public IActionResult Privacy( ) => this.View( );
 
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]
-        public IActionResult Error( )
-        {
-            return this.View( new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier } );
-        }
+        public IActionResult Error( ) =>
+            this.View( new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier } );
     }
 }

@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using BlogPosts.Enums;
-using BlogPosts.Models;
+using BragirBlogPoster.Data.Enums;
+using BragirBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace BlogPosts.Helpers
+namespace BragirBlogPoster.Data
 {
-    public static class Seeder
+    public static class DatabaseSeeder
     {
         public static async Task SeedDataAsync(
             UserManager<BlogUser>     userManager,
@@ -26,7 +26,7 @@ namespace BlogPosts.Helpers
         {
             if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser admin = new BlogUser( )
+                BlogUser admin = new BlogUser
                                  {
                                      Email          = "valhallatechtest+administrator@gmail.com",
                                      UserName       = "valhallatechtest+administrator@gmail.com",
@@ -44,7 +44,7 @@ namespace BlogPosts.Helpers
         {
             if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser moderator = new BlogUser( )
+                BlogUser moderator = new BlogUser
                                      {
                                          Email          = "valhallatechtest+projectmanager@gmail.com",
                                          UserName       = "valhallatechtest+projectmanager@gmail.com",

@@ -1,7 +1,9 @@
-﻿@model IEnumerable<Comment>
+﻿@model IEnumerable<BragirBlogPoster.Models.Comment>
+<Comment>
 
 @{
     ViewData["Title"] = "Index";
+
 
 }
 
@@ -14,6 +16,15 @@
     <thead>
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Post)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BlogUser.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BlogUser.LastName)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Content)
         </th>
         <th>
@@ -21,12 +32,6 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Updated)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Post)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.BlogUser)
         </th>
         <th></th>
     </tr>
@@ -68,3 +73,4 @@
     }
     </tbody>
 </table>
+</Comment>

@@ -1,6 +1,4 @@
-﻿@using BlogPosts.Data
-@using BlogPosts.Utilities
-@using System.Net.Mime
+﻿@using BragirBlogPoster.Data
 @inject ApplicationDbContext db
 
 <!DOCTYPE html>
@@ -95,6 +93,6 @@
 <script src = "~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" ></script>
 <script asp-append-version = "true"
         src = "~/js/site.js" ></script>
-@RenderSection("Scripts", required: false)
+@await RenderSectionAsync("Scripts", false).ConfigureAwait(false)
 </body>
 </html>

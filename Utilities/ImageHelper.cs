@@ -1,13 +1,14 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
-using BlogPosts.Models;
+using BragirBlogPoster.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace BlogPosts.Utilities
+namespace BragirBlogPoster.Utilities
 {
     public class ImageHelper
     {
-        // This method helps me get the image
+        // This method helps get the image
         public static string GetImage( Post post )
         {
             string  binary       = Convert.ToBase64String( post.Image );
@@ -17,7 +18,7 @@ namespace BlogPosts.Utilities
             return imageDataUrl;
         }
 
-        // This method helps me encode the image
+        // This method helps encode the image
         public static byte[] EncodeImage( IFormFile image )
         {
             MemoryStream ms = new MemoryStream( );

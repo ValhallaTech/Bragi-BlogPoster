@@ -1,16 +1,17 @@
 using System;
 using System.Threading.Tasks;
-using BlogPosts.Helpers;
-using BlogPosts.Models;
-using BlogPosts.Utilities;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Helpers;
+using BragirBlogPoster.Models;
+using BragirBlogPoster.Utilities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BlogPosts
+namespace BragirBlogPoster
 {
-    public class Program
+    public static class Program
     {
         public static async Task Main( string[] args )
         {
@@ -39,7 +40,7 @@ namespace BlogPosts
             {
                 UserManager<BlogUser>     userManager = services.GetRequiredService<UserManager<BlogUser>>( );
                 RoleManager<IdentityRole> roleManager = services.GetRequiredService<RoleManager<IdentityRole>>( );
-                await Seeder.SeedDataAsync( userManager, roleManager ).ConfigureAwait( false );
+                await DatabaseSeeder.SeedDataAsync( userManager, roleManager ).ConfigureAwait( false );
             }
             catch ( Exception ex )
             {

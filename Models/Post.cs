@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace BlogPosts.Models
+namespace BragirBlogPoster.Models
 {
     public class Post
     {

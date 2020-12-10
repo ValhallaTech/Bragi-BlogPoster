@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BlogPosts.Models.ViewModels
+namespace BragirBlogPoster.Models.ViewModels
 {
     public class CategoryViewModel
     {

@@ -1,6 +1,6 @@
-using BlogPosts.Data;
-using BlogPosts.Models;
-using BlogPosts.Utilities;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
+using BragirBlogPoster.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BlogPosts
+namespace BragirBlogPoster
 {
     public class Startup
     {
@@ -17,18 +17,16 @@ namespace BlogPosts
 
         public IConfiguration Configuration { get; }
 
-        // . This method gets called by the runtime. Use this method to add services to the container.
-        public void
-            ConfigureServices(
-                IServiceCollection services )
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices( IServiceCollection services )
         {
             // Remember Dependency Injection is set up here in the configureServices
             // 1. services are configured for using DbContext
+            // switched from SQLserver, to use PostgreSQL
             services.AddDbContext<ApplicationDbContext>(
-                                                        options =>
-                                                            options.UseNpgsql( // switched from default, to use NPGSql
-                                                                              PostgreHelper.GetConnectionString(
-                                                                               this.Configuration ) ) );
+                                                        options => options.UseNpgsql(
+                                                         PostgreHelper.GetConnectionString(
+                                                          this.Configuration ) ) );
 
             // 2. using directive for injection using IdentityRole with BlogUser
             services.AddIdentity<BlogUser, IdentityRole>( options => options.SignIn.RequireConfirmedAccount = true )
@@ -58,18 +56,13 @@ namespace BlogPosts
 
             app.UseHttpsRedirection( );
             app.UseStaticFiles( );
-
             app.UseRouting( );
-
             app.UseAuthentication( );
             app.UseAuthorization( );
-
             app.UseEndpoints(
                              endpoints =>
                              {
-                                 endpoints.MapControllerRoute(
-                                                              name: "default",
-                                                              pattern: "{controller=Home}/{action=Index}/{id?}" );
+                                 endpoints.MapControllerRoute( "default", "{controller=Home}/{action=Index}/{id?}" );
                                  endpoints.MapRazorPages( );
                              } );
         }

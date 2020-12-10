@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BlogPosts.Data;
-using BlogPosts.Models;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogPosts.Controllers
+namespace BragirBlogPoster.Controllers
 {
+    [Authorize]
     public class BlogsController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -14,8 +16,10 @@ namespace BlogPosts.Controllers
         public BlogsController( ApplicationDbContext context ) => this.context = context;
 
         // GET: Blogs
-        public async Task<IActionResult> Index( ) =>
-            this.View( await this.context.Blog.ToListAsync( ).ConfigureAwait( false ) );
+        public async Task<IActionResult> Index( )
+        {
+            return this.View( await this.context.Blog.ToListAsync( ).ConfigureAwait( false ) );
+        }
 
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details( int? id )
@@ -47,7 +51,7 @@ namespace BlogPosts.Controllers
         {
             if ( this.ModelState.IsValid )
             {
-                await this.context.AddAsync( blog ).ConfigureAwait(false);
+                await this.context.AddAsync( blog ).ConfigureAwait( false );
                 await this.context.SaveChangesAsync( ).ConfigureAwait( false );
 
                 return this.RedirectToAction( nameof( this.Index ) );

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using BlogPosts.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,24 +13,24 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
-namespace BlogPosts.Areas.Identity.Pages.Account
+namespace BragirBlogPoster.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<BlogUser> signInManager;
+        private readonly SignInManager<IdentityUser> signInManager;
 
-        private readonly UserManager<BlogUser> userManager;
+        private readonly UserManager<IdentityUser> userManager;
 
         private readonly ILogger<RegisterModel> logger;
 
         private readonly IEmailSender emailSender;
 
         public RegisterModel(
-            UserManager<BlogUser>   userManager,
-            SignInManager<BlogUser> signInManager,
-            ILogger<RegisterModel>  logger,
-            IEmailSender            emailSender )
+            UserManager<IdentityUser>   userManager,
+            SignInManager<IdentityUser> signInManager,
+            ILogger<RegisterModel>      logger,
+            IEmailSender                emailSender )
         {
             this.userManager   = userManager;
             this.signInManager = signInManager;
@@ -55,30 +54,12 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 
             [Required]
             [StringLength(
-                             40,
+                             100,
                              ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
-                             MinimumLength = 8 )]
+                             MinimumLength = 6 )]
             [DataType( DataType.Password )]
             [Display( Name = "Password" )]
             public string Password { get; set; }
-
-            [Required]
-            [StringLength(
-                             40,
-                             ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
-                             MinimumLength = 2 )]
-            [Display( Name = "First Name" )]
-            public string FirstName { get; set; }
-
-            [Required]
-            [StringLength(
-                             40,
-                             ErrorMessage  = "The {0} must be at least {2} and at max {1} characters long.",
-                             MinimumLength = 2 )]
-            [Display( Name = "Last Name" )]
-            public string LastName { get; set; }
-
-            [Display( Name = "Display Name" )] public string DisplayName { get; set; }
 
             [DataType( DataType.Password )]
             [Display( Name                     = "Confirm password" )]
@@ -95,21 +76,13 @@ namespace BlogPosts.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync( string returnUrl = null )
         {
-            returnUrl ??= this.Url.Content( "~/" );
+            returnUrl = returnUrl ?? this.Url.Content( "~/" );
             this.ExternalLogins =
                 ( await this.signInManager.GetExternalAuthenticationSchemesAsync( ).ConfigureAwait( false ) ).ToList( );
 
             if ( this.ModelState.IsValid )
             {
-                BlogUser user = new BlogUser
-                                {
-                                    FirstName   = this.Input.FirstName,
-                                    LastName    = this.Input.LastName,
-                                    DisplayName = this.Input.DisplayName,
-                                    UserName    = this.Input.Email,
-                                    Email       = this.Input.Email
-                                };
-
+                IdentityUser user = new IdentityUser { UserName = this.Input.Email, Email = this.Input.Email };
                 IdentityResult result =
                     await this.userManager.CreateAsync( user, this.Input.Password ).ConfigureAwait( false );
 

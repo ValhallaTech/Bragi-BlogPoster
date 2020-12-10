@@ -1,4 +1,6 @@
-﻿namespace BlogPosts.Models
+﻿// Deprecated
+
+namespace BragirBlogPoster.Models
 {
     public class PostgreSqlConnection
     {

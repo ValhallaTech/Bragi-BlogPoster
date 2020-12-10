@@ -1,9 +1,10 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BlogPosts.Data;
-using BlogPosts.Models;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Z.EntityFramework.Plus;
 
-namespace BlogPosts.Controllers
+namespace BragirBlogPoster.Controllers
 {
     public class PostsController : Controller
     {
@@ -41,7 +42,7 @@ namespace BlogPosts.Controllers
             IQueryable<Post> posts = this.context.Post.Where( p => p.BlogId == id );
 
             // Linking my posts to topic
-            return View( await posts.ToListAsync( ).ConfigureAwait( false ) );
+            return this.View( await posts.ToListAsync( ).ConfigureAwait( false ) );
         }
 
         // GET: Posts
@@ -92,7 +93,7 @@ namespace BlogPosts.Controllers
                     return this.NotFound( );
                 }
 
-                post                      = new Post( ) { BlogId = ( int )id };
+                post                      = new Post { BlogId = ( int )id };
                 this.ViewData["BlogName"] = blog.Name;
             }
             else
@@ -117,7 +118,7 @@ namespace BlogPosts.Controllers
             {
                 post.CreatedDateTime = DateTime.UtcNow;
 
-                if ( image != null )
+                if ( true )
                 {
                     post.FileName = image.FileName;
                     MemoryStream ms = new MemoryStream( );

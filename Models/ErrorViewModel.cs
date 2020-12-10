@@ -1,4 +1,4 @@
-namespace BlogPosts.Models
+namespace BragirBlogPoster.Models
 {
     public class ErrorViewModel
     {

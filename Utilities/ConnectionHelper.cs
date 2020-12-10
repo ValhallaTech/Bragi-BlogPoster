@@ -1,4 +1,6 @@
-﻿namespace BlogPosts.Utilities
+﻿// Deprecated
+
+namespace BragirBlogPoster.Utilities
 {
     public class ConnectionHelper
     {

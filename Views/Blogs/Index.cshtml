@@ -1,7 +1,10 @@
-﻿@model IEnumerable<Blog>
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model IEnumerable<BragirBlogPoster.Models.Blog>
+<Blog>
 
 @{
     ViewData["Title"] = "Index";
+
 
 }
 
@@ -50,3 +53,4 @@
     }
     </tbody>
 </table>
+</Blog>

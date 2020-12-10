@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BlogPosts.Data;
-using BlogPosts.Models;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogPosts.Controllers
+namespace BragirBlogPoster.Controllers
 {
     public class TagsController : Controller
     {

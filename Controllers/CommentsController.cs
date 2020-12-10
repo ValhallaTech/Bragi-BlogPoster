@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using BlogPosts.Data;
-using BlogPosts.Models;
+using BragirBlogPoster.Data;
+using BragirBlogPoster.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Z.EntityFramework.Plus;
 
-namespace BlogPosts.Controllers
+namespace BragirBlogPoster.Controllers
 {
     public class CommentsController : Controller
     {
@@ -18,19 +18,17 @@ namespace BlogPosts.Controllers
         public CommentsController( ApplicationDbContext context ) => this.context = context;
 
         // GET: Comments
-        [Authorize(Roles = "Administrator, Moderator")]
+        [Authorize( Roles = "Administrator, Moderator" )]
         public async Task<IActionResult> Index( )
         {
             IIncludableQueryable<Comment, Post> applicationDbContext =
-                this.context.Comment
-                    .IncludeOptimized( c => c.BlogUser )
-                    .Include( c => c.Post );
+                this.context.Comment.IncludeOptimized( c => c.BlogUser ).IncludeOptimized( c => c.Post ) as IIncludableQueryable<Comment, Post>;
 
             return this.View( await applicationDbContext.ToListAsync( ).ConfigureAwait( false ) );
         }
 
         // GET: Comments/Details/5
-        [Authorize(Roles = "Administrator, Moderator")]
+        [Authorize( Roles = "Administrator, Moderator" )]
         public async Task<IActionResult> Details( int? id )
         {
             if ( id == null )
@@ -38,7 +36,8 @@ namespace BlogPosts.Controllers
                 return this.NotFound( );
             }
 
-            Comment comment = await this.context.Comment.IncludeOptimized( c => c.BlogUser )
+            Comment comment = await this.context.Comment
+                                        .IncludeOptimized( c => c.BlogUser )
                                         .IncludeOptimized( c => c.Post )
                                         .FirstOrDefaultAsync( m => m.Id == id )
                                         .ConfigureAwait( false );
@@ -52,7 +51,7 @@ namespace BlogPosts.Controllers
         }
 
         // GET: Comments/Create
-        [Authorize(Roles = "Administrator, Moderator")]
+        [Authorize( Roles = "Administrator, Moderator" )]
         public IActionResult Create( )
         {
             this.ViewData["AuthorId"] = new SelectList( this.context.Set<BlogUser>( ), "Id", "Id" );
@@ -72,7 +71,7 @@ namespace BlogPosts.Controllers
         {
             if ( this.ModelState.IsValid )
             {
-                await this.context.AddAsync( comment ).ConfigureAwait(false);
+                await this.context.AddAsync( comment ).ConfigureAwait( false );
                 await this.context.SaveChangesAsync( ).ConfigureAwait( false );
 
                 return this.RedirectToAction( nameof( this.Index ) );
@@ -146,7 +145,7 @@ namespace BlogPosts.Controllers
         }
 
         // GET: Comments/Delete/5
-        [Authorize(Roles = "Administrator, Moderator")]
+        [Authorize( Roles = "Administrator, Moderator" )]
         public async Task<IActionResult> Delete( int? id )
         {
             if ( id == null )
@@ -172,7 +171,7 @@ namespace BlogPosts.Controllers
         [HttpPost]
         [ActionName( "Delete" )]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator, Moderator")]
+        [Authorize( Roles = "Administrator, Moderator" )]
         public async Task<IActionResult> DeleteConfirmed( int id )
         {
             Comment comment = await this.context.Comment.FindAsync( id ).ConfigureAwait( false );

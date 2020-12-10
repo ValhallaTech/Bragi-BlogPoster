@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace BlogPosts.Models
+namespace BragirBlogPoster.Models
 {
     public class BlogUser : IdentityUser
     {

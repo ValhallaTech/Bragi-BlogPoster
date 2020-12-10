@@ -1,7 +1,8 @@
-﻿@model Blog
+﻿@model BragirBlogPoster.Models.Blog
 
 @{
     ViewData["Title"] = "Create";
+
 
 }
 
@@ -49,5 +50,5 @@
 </div>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial").ConfigureAwait(false); }
 }

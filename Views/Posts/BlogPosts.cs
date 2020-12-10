@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BlogPosts.Views.Posts
+namespace BragirBlogPoster.Views.Posts
 {
     public class BlogPostsModel : PageModel
     {

@@ -1,17 +1,9 @@
-﻿using System;
-
-using BlogPosts.Data;
-
+﻿using BragirBlogPoster.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-[assembly: HostingStartup( typeof( BlogPosts.Areas.Identity.IdentityHostingStartup ) )]
+[assembly: HostingStartup( typeof( IdentityHostingStartup ) )]
 
-namespace BlogPosts.Areas.Identity
+namespace BragirBlogPoster.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {
