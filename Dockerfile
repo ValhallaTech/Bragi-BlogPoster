@@ -6,7 +6,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
-COPY ["BragirBlogPoster.csproj", ""]
+COPY ["BragiBlogPoster.csproj", ""]
 RUN dotnet restore "./BragiBlogPoster.csproj"
 COPY . .
 WORKDIR "/src/."
