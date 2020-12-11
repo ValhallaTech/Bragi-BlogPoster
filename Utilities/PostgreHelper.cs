@@ -1,14 +1,14 @@
 ﻿#nullable enable
 using System;
 using System.Threading.Tasks;
-using BragirBlogPoster.Data;
+using BragiBlogPoster.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
-namespace BragirBlogPoster.Utilities
+namespace BragiBlogPoster.Utilities
 {
     public static class PostgreHelper
     {

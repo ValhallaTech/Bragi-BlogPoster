@@ -5,8 +5,8 @@
     <UserSecretsId>aspnet-BlogPosts-63744E45-8E37-4DBE-9339-AB760CE0CE3A</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-    <AssemblyName>BragirBlogPoster</AssemblyName>
-    <RootNamespace>BragirBlogPoster</RootNamespace>
+    <AssemblyName>BragiBlogPoster</AssemblyName>
+    <RootNamespace>BragiBlogPoster</RootNamespace>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>

@@ -1,4 +1,4 @@
-﻿namespace BragirBlogPoster.Data.Enums
+﻿namespace BragiBlogPoster.Data.Enums
 {
     public enum Roles
     {

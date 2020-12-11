@@ -2,16 +2,16 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using BragirBlogPoster.Data;
-using BragirBlogPoster.Models;
-using BragirBlogPoster.Models.ViewModels;
+using BragiBlogPoster.Data;
+using BragiBlogPoster.Models;
+using BragiBlogPoster.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
 
-namespace BragirBlogPoster.Controllers
+namespace BragiBlogPoster.Controllers
 {
     public class HomeController : Controller
     {

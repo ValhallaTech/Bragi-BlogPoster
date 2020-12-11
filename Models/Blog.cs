@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BragirBlogPoster.Models
+namespace BragiBlogPoster.Models
 {
     public class Blog
     {

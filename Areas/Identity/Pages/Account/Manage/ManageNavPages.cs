@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BragirBlogPoster.Areas.Identity.Pages.Account.Manage
+namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public static class ManageNavPages
     {

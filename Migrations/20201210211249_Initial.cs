@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace BragirBlogPoster.Migrations
+namespace BragiBlogPoster.Migrations
 {
     public partial class Initial : Migration
     {

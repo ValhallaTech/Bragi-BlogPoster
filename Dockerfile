@@ -3,19 +3,19 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY ["BlogPosts.csproj", ""]
-RUN dotnet restore "./BlogPosts.csproj"
+
+COPY ["BragirBlogPoster.csproj", ""]
+RUN dotnet restore "./BragiBlogPoster.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "BlogPosts.csproj" -c Release -o /app/build
+RUN dotnet build "BragiBlogPoster.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BlogPosts.csproj" -c Release -o /app/publish
+RUN dotnet publish "BragiBlogPoster.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet BlogPosts.dll
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet BragiBlogPoster.dll

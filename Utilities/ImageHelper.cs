@@ -1,10 +1,10 @@
 ﻿#nullable enable
 using System;
 using System.IO;
-using BragirBlogPoster.Models;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace BragirBlogPoster.Utilities
+namespace BragiBlogPoster.Utilities
 {
     public class ImageHelper
     {

@@ -1,8 +1,8 @@
-﻿using BragirBlogPoster.Models;
+﻿using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace BragirBlogPoster.Data
+namespace BragiBlogPoster.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

@@ -1,6 +1,6 @@
 ﻿// Deprecated
 
-namespace BragirBlogPoster.Models
+namespace BragiBlogPoster.Models
 {
     public class PostgreSqlConnection
     {

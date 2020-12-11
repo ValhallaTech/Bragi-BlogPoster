@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BragirBlogPoster.Models
+namespace BragiBlogPoster.Models
 {
     public class Comment
     {

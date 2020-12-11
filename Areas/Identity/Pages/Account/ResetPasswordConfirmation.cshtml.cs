@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace BragirBlogPoster.Areas.Identity.Pages.Account
+namespace BragiBlogPoster.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ResetPasswordConfirmationModel : PageModel

@@ -1,9 +1,9 @@
-﻿using BragirBlogPoster.Areas.Identity;
+﻿using BragiBlogPoster.Areas.Identity;
 using Microsoft.AspNetCore.Hosting;
 
 [assembly: HostingStartup( typeof( IdentityHostingStartup ) )]
 
-namespace BragirBlogPoster.Areas.Identity
+namespace BragiBlogPoster.Areas.Identity
 {
     public class IdentityHostingStartup : IHostingStartup
     {

@@ -3,8 +3,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BragirBlogPoster.Data;
-using BragirBlogPoster.Models;
+using BragiBlogPoster.Data;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Z.EntityFramework.Plus;
 
-namespace BragirBlogPoster.Controllers
+namespace BragiBlogPoster.Controllers
 {
     public class PostsController : Controller
     {

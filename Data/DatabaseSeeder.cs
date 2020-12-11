@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
-using BragirBlogPoster.Data.Enums;
-using BragirBlogPoster.Models;
+﻿#nullable enable
+using System.Threading.Tasks;
+using BragiBlogPoster.Data.Enums;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace BragirBlogPoster.Data
+namespace BragiBlogPoster.Data
 {
     public static class DatabaseSeeder
     {
@@ -26,14 +27,16 @@ namespace BragirBlogPoster.Data
         {
             if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser admin = new BlogUser
-                                 {
-                                     Email          = "valhallatechtest+administrator@gmail.com",
-                                     UserName       = "valhallatechtest+administrator@gmail.com",
-                                     FirstName      = "Fred",
-                                     LastName       = "Smith",
-                                     EmailConfirmed = true
-                                 };
+                BlogUser? admin = null;
+                admin = new BlogUser
+                        {
+                            Email          = "valhallatechtest+administrator@gmail.com",
+                            UserName       = "valhallatechtest+administrator@gmail.com",
+                            FirstName      = "Fred",
+                            LastName       = "Smith",
+                            DisplayName    = admin?.FirstName + admin?.LastName,
+                            EmailConfirmed = true
+                        };
 
                 await userManager.CreateAsync( admin, "Abc&123!" ).ConfigureAwait( false );
                 await userManager.AddToRoleAsync( admin, nameof( Roles.Administrator ) ).ConfigureAwait( false );
@@ -44,12 +47,14 @@ namespace BragirBlogPoster.Data
         {
             if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser moderator = new BlogUser
+                BlogUser? moderator = null;
+                moderator = new BlogUser
                                      {
                                          Email          = "valhallatechtest+projectmanager@gmail.com",
                                          UserName       = "valhallatechtest+projectmanager@gmail.com",
                                          FirstName      = "Bill",
                                          LastName       = "Williams",
+                                         DisplayName    = moderator?.FirstName + moderator?.LastName,
                                          EmailConfirmed = true
                                      };
                 await userManager.CreateAsync( moderator, "Abc&123!" ).ConfigureAwait( false );

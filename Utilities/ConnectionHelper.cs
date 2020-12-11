@@ -1,6 +1,6 @@
 ﻿// Deprecated
 
-namespace BragirBlogPoster.Utilities
+namespace BragiBlogPoster.Utilities
 {
     public class ConnectionHelper
     {

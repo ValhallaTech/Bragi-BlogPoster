@@ -1,4 +1,4 @@
-﻿@using BragirBlogPoster.Areas.Identity.Pages.Account.Manage
+﻿@using BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 @inject SignInManager<IdentityUser> SignInManager
 @{
     bool hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait(false)).Any();

@@ -1,15 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using BragirBlogPoster.Data;
-using BragirBlogPoster.Helpers;
-using BragirBlogPoster.Models;
-using BragirBlogPoster.Utilities;
+using BragiBlogPoster.Data;
+using BragiBlogPoster.Models;
+using BragiBlogPoster.Utilities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace BragirBlogPoster
+namespace BragiBlogPoster
 {
     public static class Program
     {
