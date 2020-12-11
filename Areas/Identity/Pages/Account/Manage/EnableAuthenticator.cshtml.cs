@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Linq;
 using System.Threading.Tasks;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,20 +16,20 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
-        private readonly UserManager<IdentityUser>         _userManager;
+        private readonly UserManager<BlogUser> _userManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger;
-        private readonly UrlEncoder                        _urlEncoder;
+        private readonly UrlEncoder _urlEncoder;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
         public EnableAuthenticatorModel(
-            UserManager<IdentityUser>         userManager,
+            UserManager<BlogUser> userManager,
             ILogger<EnableAuthenticatorModel> logger,
-            UrlEncoder                        urlEncoder)
+            UrlEncoder urlEncoder)
         {
-            this._userManager = userManager;
-            this._logger      = logger;
-            this._urlEncoder     = urlEncoder;
+            _userManager = userManager;
+            _logger = logger;
+            _urlEncoder = urlEncoder;
         }
 
         public string SharedKey { get; set; }
@@ -53,89 +56,87 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await this.LoadSharedKeyAndQrCodeUriAsync(user).ConfigureAwait( false );
+            await LoadSharedKeyAndQrCodeUriAsync(user);
 
-            return this.Page();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            if (!this.ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await this.LoadSharedKeyAndQrCodeUriAsync(user).ConfigureAwait( false );
-                return this.Page();
+                await LoadSharedKeyAndQrCodeUriAsync(user);
+                return Page();
             }
 
             // Strip spaces and hypens
-            string verificationCode = this.Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
+            var verificationCode = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
 
-            bool is2faTokenValid = await this._userManager.VerifyTwoFactorTokenAsync(
-                                    user,
-                                    this._userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode).ConfigureAwait( false );
+            var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
+                user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
 
             if (!is2faTokenValid)
             {
-                this.ModelState.AddModelError("Input.Code", "Verification code is invalid.");
-                await this.LoadSharedKeyAndQrCodeUriAsync(user).ConfigureAwait( false );
-                return this.Page();
+                ModelState.AddModelError("Input.Code", "Verification code is invalid.");
+                await LoadSharedKeyAndQrCodeUriAsync(user);
+                return Page();
             }
 
-            await this._userManager.SetTwoFactorEnabledAsync(user, true).ConfigureAwait( false );
-            string userId = await this._userManager.GetUserIdAsync(user).ConfigureAwait( false );
-            this._logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            var userId = await _userManager.GetUserIdAsync(user);
+            _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
 
-            this.StatusMessage = "Your authenticator app has been verified.";
+            StatusMessage = "Your authenticator app has been verified.";
 
-            if (await this._userManager.CountRecoveryCodesAsync(user).ConfigureAwait( false ) == 0)
+            if (await _userManager.CountRecoveryCodesAsync(user) == 0)
             {
-                IEnumerable<string> recoveryCodes = await this._userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait( false );
-                this.RecoveryCodes = recoveryCodes.ToArray();
-                return this.RedirectToPage("./ShowRecoveryCodes");
+                var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+                RecoveryCodes = recoveryCodes.ToArray();
+                return RedirectToPage("./ShowRecoveryCodes");
             }
             else
             {
-                return this.RedirectToPage("./TwoFactorAuthentication");
+                return RedirectToPage("./TwoFactorAuthentication");
             }
         }
 
-        private async Task LoadSharedKeyAndQrCodeUriAsync(IdentityUser user)
+        private async Task LoadSharedKeyAndQrCodeUriAsync(BlogUser user)
         {
             // Load the authenticator key & QR code URI to display on the form
-            string unformattedKey = await this._userManager.GetAuthenticatorKeyAsync(user).ConfigureAwait( false );
+            var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             if (string.IsNullOrEmpty(unformattedKey))
             {
-                await this._userManager.ResetAuthenticatorKeyAsync(user).ConfigureAwait( false );
-                unformattedKey = await this._userManager.GetAuthenticatorKeyAsync(user).ConfigureAwait( false );
+                await _userManager.ResetAuthenticatorKeyAsync(user);
+                unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             }
 
-            this.SharedKey = this.FormatKey(unformattedKey);
+            SharedKey = FormatKey(unformattedKey);
 
-            string email = await this._userManager.GetEmailAsync(user).ConfigureAwait( false );
-            this.AuthenticatorUri = this.GenerateQrCodeUri(email, unformattedKey);
+            var email = await _userManager.GetEmailAsync(user);
+            AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
         }
 
         private string FormatKey(string unformattedKey)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
             int currentPosition = 0;
             while (currentPosition + 4 < unformattedKey.Length)
             {
                 result.Append(unformattedKey.Substring(currentPosition, 4)).Append(" ");
                 currentPosition += 4;
             }
-
             if (currentPosition < unformattedKey.Length)
             {
                 result.Append(unformattedKey.Substring(currentPosition));
@@ -148,8 +149,8 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                this._urlEncoder.Encode("BragirBlogPoster"),
-                this._urlEncoder.Encode(email),
+                _urlEncoder.Encode("BragiBlogPoster"),
+                _urlEncoder.Encode(email),
                 unformattedKey);
         }
     }

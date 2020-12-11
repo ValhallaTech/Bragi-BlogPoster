@@ -27,14 +27,12 @@ namespace BragiBlogPoster.Data
         {
             if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser? admin = null;
-                admin = new BlogUser
+                BlogUser admin = new BlogUser
                         {
                             Email          = "valhallatechtest+administrator@gmail.com",
                             UserName       = "valhallatechtest+administrator@gmail.com",
                             FirstName      = "Fred",
                             LastName       = "Smith",
-                            DisplayName    = admin?.FirstName + admin?.LastName,
                             EmailConfirmed = true
                         };
 
@@ -47,14 +45,12 @@ namespace BragiBlogPoster.Data
         {
             if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
-                BlogUser? moderator = null;
-                moderator = new BlogUser
+               BlogUser moderator = new BlogUser
                                      {
                                          Email          = "valhallatechtest+projectmanager@gmail.com",
                                          UserName       = "valhallatechtest+projectmanager@gmail.com",
                                          FirstName      = "Bill",
                                          LastName       = "Williams",
-                                         DisplayName    = moderator?.FirstName + moderator?.LastName,
                                          EmailConfirmed = true
                                      };
                 await userManager.CreateAsync( moderator, "Abc&123!" ).ConfigureAwait( false );

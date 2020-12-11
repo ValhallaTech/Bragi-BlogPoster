@@ -20,6 +20,9 @@ namespace BragiBlogPoster
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices( IServiceCollection services )
         {
+            // Adds the controllers to the DI container
+            services.AddControllers( ).AddControllersAsServices( );
+
             // Remember Dependency Injection is set up here in the configureServices
             // 1. services are configured for using DbContext
             // switched from SQLserver, to use PostgreSQL

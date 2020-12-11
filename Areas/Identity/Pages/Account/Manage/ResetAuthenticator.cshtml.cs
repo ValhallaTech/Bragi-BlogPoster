@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,18 +12,18 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        UserManager<IdentityUser>                    _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        ILogger<ResetAuthenticatorModel>             _logger;
+        UserManager<BlogUser> _userManager;
+        private readonly SignInManager<BlogUser> _signInManager;
+        ILogger<ResetAuthenticatorModel> _logger;
 
         public ResetAuthenticatorModel(
-            UserManager<IdentityUser>        userManager,
-            SignInManager<IdentityUser>      signInManager,
+            UserManager<BlogUser> userManager,
+            SignInManager<BlogUser> signInManager,
             ILogger<ResetAuthenticatorModel> logger)
         {
-            this._userManager   = userManager;
-            this._signInManager = signInManager;
-            this._logger           = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _logger = logger;
         }
 
         [TempData]
@@ -27,31 +31,31 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGet()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            return this.Page();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            await this._userManager.SetTwoFactorEnabledAsync(user, false).ConfigureAwait( false );
-            await this._userManager.ResetAuthenticatorKeyAsync(user).ConfigureAwait( false );
-            this._logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
+            await _userManager.SetTwoFactorEnabledAsync(user, false);
+            await _userManager.ResetAuthenticatorKeyAsync(user);
+            _logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
             
-            await this._signInManager.RefreshSignInAsync(user).ConfigureAwait( false );
-            this.StatusMessage = "Your authenticator app key has been reset, you will need to configure your authenticator app using the new key.";
+            await _signInManager.RefreshSignInAsync(user);
+            StatusMessage = "Your authenticator app key has been reset, you will need to configure your authenticator app using the new key.";
 
-            return this.RedirectToPage("./EnableAuthenticator");
+            return RedirectToPage("./EnableAuthenticator");
         }
     }
 }

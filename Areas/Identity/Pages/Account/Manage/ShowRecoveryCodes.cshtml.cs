@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using BragiBlogPoster.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 
 namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
@@ -11,14 +18,14 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
-        public IActionResult OnGet( )
+        public IActionResult OnGet()
         {
-            if ( this.RecoveryCodes == null || this.RecoveryCodes.Length == 0 )
+            if (RecoveryCodes == null || RecoveryCodes.Length == 0)
             {
-                return this.RedirectToPage( "./TwoFactorAuthentication" );
+                return RedirectToPage("./TwoFactorAuthentication");
             }
 
-            return this.Page( );
+            return Page();
         }
     }
 }

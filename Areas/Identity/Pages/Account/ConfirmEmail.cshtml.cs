@@ -1,6 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,11 +15,11 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public ConfirmEmailModel(UserManager<IdentityUser> userManager)
+        public ConfirmEmailModel(UserManager<BlogUser> userManager)
         {
-            this._userManager = userManager;
+            _userManager = userManager;
         }
 
         [TempData]
@@ -25,19 +29,19 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
         {
             if (userId == null || code == null)
             {
-                return this.RedirectToPage("/Index");
+                return RedirectToPage("/Index");
             }
 
-            IdentityUser user = await this._userManager.FindByIdAsync(userId).ConfigureAwait( false );
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{userId}'.");
+                return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            IdentityResult result = await this._userManager.ConfirmEmailAsync(user, code).ConfigureAwait( false );
-            this.StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
-            return this.Page();
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            return Page();
         }
     }
 }

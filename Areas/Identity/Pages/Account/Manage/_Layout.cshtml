@@ -1,13 +1,12 @@
 ﻿@{
-    if (ViewData.TryGetValue("ParentLayout", out object parentLayout))
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
         Layout = (string)parentLayout;
     }
     else
     {
-        Layout = "/Views/Shared/_Layout.cshtml";
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
-
 }
 
 <h2>Manage your account</h2>
@@ -26,5 +25,5 @@
 </div>
 
 @section Scripts {
-    @await RenderSectionAsync("Scripts", required: false).ConfigureAwait(false)
+    @RenderSection("Scripts", required: false)
 }

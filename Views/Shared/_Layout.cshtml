@@ -1,28 +1,26 @@
 ﻿@using BragiBlogPoster.Data
+@using BragiBlogPoster.Models
+@using Microsoft.AspNetCore.Identity
 @inject ApplicationDbContext db
 
 <!DOCTYPE html>
-<html lang = "en" >
+<html lang = "en-US" >
 <head>
     <meta charset = "utf-8" />
     <meta content = "width=device-width, initial-scale=1.0"
           name = "viewport" />
-    <title>@ViewData["Title"] - BlogPosts</title>
+    <title>@ViewData["Title"] - Something Like a Blog powered by Bragi BlogPoster</title>
     <link href = "~/lib/bootstrap/dist/css/bootstrap.min.css"
           rel = "stylesheet" />
     <link href = "~/css/site.css"
           rel = "stylesheet" />
 </head>
+
 <body>
 <header>
     <nav class = "bg-white border-bottom box-shadow mb-3 navbar navbar-expand-sm navbar-light navbar-toggleable-sm" >
         <div class = "container" >
-            <a asp-action = "Index"
-               asp-area = ""
-               asp-controller = "Home"
-               class = "navbar-brand" >
-                BlogPosts
-            </a>
+            <a asp-action="Index" asp-controller="Home" class="navbar-brand">BlogPosts</a>
             <button aria-controls = "navbarSupportedContent"
                     aria-expanded = "false"
                     aria-label = "Toggle navigation"
@@ -37,7 +35,6 @@
                 <ul class = "flex-grow-1 navbar-nav" >
                     <li class = "nav-item" >
                         <a asp-action = "Index"
-                           asp-area = ""
                            asp-controller = "Home"
                            class = "nav-link text-dark" >
                             Home
@@ -45,7 +42,6 @@
                     </li>
                     <li class = "nav-item" >
                         <a asp-action = "Create"
-                           asp-area = ""
                            asp-controller = "Blogs"
                            class = "nav-link text-dark" >
                             Blogs
@@ -53,7 +49,6 @@
                     </li>
                     <li class = "nav-item" >
                         <a asp-action = "Create"
-                           asp-area = ""
                            asp-controller = "Posts"
                            class = "nav-link text-dark" >
                             Posts
@@ -61,7 +56,6 @@
                     </li>
                     <li class = "nav-item" >
                         <a asp-action = "Privacy"
-                           asp-area = ""
                            asp-controller = "Home"
                            class = "nav-link text-dark" >
                             Privacy
@@ -81,9 +75,9 @@
 
 <footer class = "border-top footer text-muted" >
     <div class = "container" >
-        &copy; 2020 - BlogPosts -
-        <a asp-action = "Privacy"
-           asp-area = ""
+        &copy; 2020 - Bragi BlogPoster by Valhalla Tech -
+        <a asp-area = ""
+           asp-action = "Privacy"
            asp-controller = "Home" >
             Privacy
         </a>
@@ -93,6 +87,6 @@
 <script src = "~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" ></script>
 <script asp-append-version = "true"
         src = "~/js/site.js" ></script>
-@await RenderSectionAsync("Scripts", false).ConfigureAwait(false)
+@RenderSection("Scripts", false)
 </body>
 </html>

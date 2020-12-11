@@ -1,10 +1,8 @@
 ﻿@page
-@using BragiBlogPoster.Areas.Identity.Pages.Account
 @model ConfirmEmailChangeModel
 @{
     ViewData["Title"] = "Confirm email change";
 }
 
 <h1>@ViewData["Title"]</h1>
-<partial model="Model.StatusMessage"
-         name="_StatusMessage" />
+<partial name="_StatusMessage" model="Model.StatusMessage" />

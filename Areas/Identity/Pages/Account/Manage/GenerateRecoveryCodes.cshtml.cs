@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -11,15 +12,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class GenerateRecoveryCodesModel : PageModel
     {
-        private readonly UserManager<IdentityUser>           _userManager;
+        private readonly UserManager<BlogUser> _userManager;
         private readonly ILogger<GenerateRecoveryCodesModel> _logger;
 
         public GenerateRecoveryCodesModel(
-            UserManager<IdentityUser>           userManager,
+            UserManager<BlogUser> userManager,
             ILogger<GenerateRecoveryCodesModel> logger)
         {
-            this._userManager = userManager;
-            this._logger         = logger;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         [TempData]
@@ -30,43 +31,43 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            bool isTwoFactorEnabled = await this._userManager.GetTwoFactorEnabledAsync(user).ConfigureAwait( false );
+            var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
             if (!isTwoFactorEnabled)
             {
-                string userId = await this._userManager.GetUserIdAsync(user).ConfigureAwait( false );
+                var userId = await _userManager.GetUserIdAsync(user);
                 throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
             }
 
-            return this.Page();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            IdentityUser user = await this._userManager.GetUserAsync( this.User).ConfigureAwait( false );
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return this.NotFound($"Unable to load user with ID '{this._userManager.GetUserId( this.User)}'.");
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            bool isTwoFactorEnabled = await this._userManager.GetTwoFactorEnabledAsync(user).ConfigureAwait( false );
-            string userId             = await this._userManager.GetUserIdAsync(user).ConfigureAwait( false );
+            var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+            var userId = await _userManager.GetUserIdAsync(user);
             if (!isTwoFactorEnabled)
             {
                 throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' as they do not have 2FA enabled.");
             }
 
-            IEnumerable<string> recoveryCodes = await this._userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait( false );
-            this.RecoveryCodes = recoveryCodes.ToArray();
+            var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+            RecoveryCodes = recoveryCodes.ToArray();
 
-            this._logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
-            this.StatusMessage = "You have generated new recovery codes.";
-            return this.RedirectToPage("./ShowRecoveryCodes");
+            _logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
+            StatusMessage = "You have generated new recovery codes.";
+            return RedirectToPage("./ShowRecoveryCodes");
         }
     }
 }

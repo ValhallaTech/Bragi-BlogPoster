@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +17,13 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IEmailSender              _emailSender;
+        private readonly UserManager<BlogUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<BlogUser> userManager, IEmailSender emailSender)
         {
-            this._userManager = userManager;
-            this._emailSender    = emailSender;
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         [BindProperty]
@@ -35,34 +38,34 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if ( this.ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                IdentityUser user = await this._userManager.FindByEmailAsync( this.Input.Email).ConfigureAwait( false );
-                if (user == null || !(await this._userManager.IsEmailConfirmedAsync(user).ConfigureAwait( false ) ))
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return this.RedirectToPage("./ForgotPasswordConfirmation");
+                    return RedirectToPage("./ForgotPasswordConfirmation");
                 }
 
                 // For more information on how to enable account confirmation and password reset please 
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
-                string code = await this._userManager.GeneratePasswordResetTokenAsync(user).ConfigureAwait( false );
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                string callbackUrl = this.Url.Page(
-                                                   "/Account/ResetPassword",
-                                                   pageHandler: null,
-                                                   values: new { area = "Identity", code },
-                                                   protocol: this.Request.Scheme);
+                var callbackUrl = Url.Page(
+                    "/Account/ResetPassword",
+                    pageHandler: null,
+                    values: new { area = "Identity", code },
+                    protocol: Request.Scheme);
 
-                await this._emailSender.SendEmailAsync(
-                                                       this.Input.Email,
-                                                       "Reset Password",
-                                                       $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.").ConfigureAwait( false );
+                await _emailSender.SendEmailAsync(
+                    Input.Email,
+                    "Reset Password",
+                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                return this.RedirectToPage("./ForgotPasswordConfirmation");
+                return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
-            return this.Page();
+            return Page();
         }
     }
 }
