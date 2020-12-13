@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BragiBlogPoster.Controllers
 {
-    [Authorize]
     public class BlogsController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -16,10 +15,7 @@ namespace BragiBlogPoster.Controllers
         public BlogsController( ApplicationDbContext context ) => this.context = context;
 
         // GET: Blogs
-        public async Task<IActionResult> Index( )
-        {
-            return this.View( await this.context.Blog.ToListAsync( ).ConfigureAwait( false ) );
-        }
+        public async Task<IActionResult> Index( ) => this.View( await this.context.Blog.ToListAsync( ).ConfigureAwait( false ) );
 
         // GET: Blogs/Details/5
         public async Task<IActionResult> Details( int? id )
@@ -40,6 +36,7 @@ namespace BragiBlogPoster.Controllers
         }
 
         // GET: Blogs/Create
+        [Authorize]
         public IActionResult Create( ) => this.View( );
 
         // POST: Blogs/Create
