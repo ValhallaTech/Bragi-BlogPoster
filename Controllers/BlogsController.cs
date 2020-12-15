@@ -35,6 +35,7 @@ namespace BragiBlogPoster.Controllers
             return this.View( blog );
         }
 
+        [Authorize]
         // GET: Blogs/Create
         [Authorize]
         public IActionResult Create( ) => this.View( );

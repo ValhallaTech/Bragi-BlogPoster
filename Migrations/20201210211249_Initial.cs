@@ -177,16 +177,16 @@ namespace BragiBlogPoster.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    BlogId = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
-                    Abstract = table.Column<string>(nullable: true),
-                    Content = table.Column<string>(nullable: true),
-                    Slug = table.Column<string>(nullable: true),
-                    FileName = table.Column<string>(nullable: true),
-                    Image = table.Column<byte[]>(nullable: true),
+                    BlogId          = table.Column<int>(nullable: false),
+                    Title           = table.Column<string>(nullable: true),
+                    Abstract        = table.Column<string>(nullable: true),
+                    Content         = table.Column<string>(nullable: true),
+                    Slug            = table.Column<string>(nullable: true),
+                    FileName        = table.Column<string>(nullable: true),
+                    Image           = table.Column<byte[]>(nullable: true),
                     CreatedDateTime = table.Column<DateTime>(nullable: false),
                     UpdatedDateTime = table.Column<DateTime>(nullable: true),
-                    IsPublished = table.Column<bool>(nullable: false)
+                    IsPublished     = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

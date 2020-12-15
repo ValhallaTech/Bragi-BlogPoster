@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BragiBlogPoster.Models;
@@ -14,43 +14,43 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly ILogger<DownloadPersonalDataModel> _logger;
+        private readonly UserManager<BlogUser>              userManager;
+        private readonly ILogger<DownloadPersonalDataModel> logger;
 
         public DownloadPersonalDataModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>              userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
-            _userManager = userManager;
-            _logger = logger;
+            this.userManager = userManager;
+            this.logger      = logger;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
+            this.logger.LogInformation("User with ID '{UserId}' asked for their personal data.", this.userManager.GetUserId( this.User));
 
             // Only include personal data for download
-            var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(BlogUser).GetProperties().Where(
-                            prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
-            foreach (var p in personalDataProps)
+            Dictionary<string, string> personalData = new Dictionary<string, string>();
+            IEnumerable<PropertyInfo> personalDataProps = typeof(BlogUser).GetProperties().Where(
+                                                                                                 prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+            foreach (PropertyInfo p in personalDataProps)
             {
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
-            var logins = await _userManager.GetLoginsAsync(user);
-            foreach (var l in logins)
+            IList<UserLoginInfo> logins = await this.userManager.GetLoginsAsync(user).ConfigureAwait( false );
+            foreach (UserLoginInfo l in logins)
             {
                 personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
             }
 
-            Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
+            this.Response.Headers.Add("Content-Disposition", "attachment; filename=PersonalData.json");
             return new FileContentResult(JsonSerializer.SerializeToUtf8Bytes(personalData), "application/json");
         }
     }

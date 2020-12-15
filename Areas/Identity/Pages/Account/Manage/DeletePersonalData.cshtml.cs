@@ -11,18 +11,18 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
-        private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly UserManager<BlogUser>            userManager;
+        private readonly SignInManager<BlogUser>          signInManager;
+        private readonly ILogger<DeletePersonalDataModel> logger;
 
         public DeletePersonalDataModel(
-            UserManager<BlogUser> userManager,
-            SignInManager<BlogUser> signInManager,
+            UserManager<BlogUser>            userManager,
+            SignInManager<BlogUser>          signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
+            this.logger        = logger;
         }
 
         [BindProperty]
@@ -39,46 +39,46 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGet()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            RequirePassword = await _userManager.HasPasswordAsync(user);
-            return Page();
+            this.RequirePassword = await this.userManager.HasPasswordAsync(user).ConfigureAwait( false );
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            RequirePassword = await _userManager.HasPasswordAsync(user);
-            if (RequirePassword)
+            this.RequirePassword = await this.userManager.HasPasswordAsync(user).ConfigureAwait( false );
+            if ( this.RequirePassword)
             {
-                if (!await _userManager.CheckPasswordAsync(user, Input.Password))
+                if (!await this.userManager.CheckPasswordAsync(user, this.Input.Password).ConfigureAwait( false ) )
                 {
-                    ModelState.AddModelError(string.Empty, "Incorrect password.");
-                    return Page();
+                    this.ModelState.AddModelError(string.Empty, "Incorrect password.");
+                    return this.Page();
                 }
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
+            IdentityResult result = await this.userManager.DeleteAsync(user).ConfigureAwait( false );
+            string userId = await this.userManager.GetUserIdAsync(user).ConfigureAwait( false );
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{userId}'.");
             }
 
-            await _signInManager.SignOutAsync();
+            await this.signInManager.SignOutAsync().ConfigureAwait( false );
 
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
+            this.logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
-            return Redirect("~/");
+            return this.Redirect("~/");
         }
     }
 }

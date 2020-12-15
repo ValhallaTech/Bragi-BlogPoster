@@ -1,27 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using BragiBlogPoster.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace BragiBlogPoster.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public class LoginWith2faModel : PageModel
+    public class LoginWith2FaModel : PageModel
     {
-        private readonly SignInManager<BlogUser> _signInManager;
-        private readonly ILogger<LoginWith2faModel> _logger;
+        private readonly SignInManager<BlogUser>    signInManager;
+        private readonly ILogger<LoginWith2FaModel> logger;
 
-        public LoginWith2faModel(SignInManager<BlogUser> signInManager, ILogger<LoginWith2faModel> logger)
+        public LoginWith2FaModel(SignInManager<BlogUser> signInManager, ILogger<LoginWith2FaModel> logger)
         {
-            _signInManager = signInManager;
-            _logger = logger;
+            this.signInManager = signInManager;
+            this.logger        = logger;
         }
 
         [BindProperty]
@@ -46,53 +45,53 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null)
         {
             // Ensure the user has gone through the username & password screen first
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            BlogUser user = await this.signInManager.GetTwoFactorAuthenticationUserAsync().ConfigureAwait( false );
 
             if (user == null)
             {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
-            ReturnUrl = returnUrl;
-            RememberMe = rememberMe;
+            this.ReturnUrl = returnUrl;
+            this.RememberMe   = rememberMe;
 
-            return Page();
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync(bool rememberMe, string returnUrl = null)
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return Page();
+                return this.Page();
             }
 
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl = returnUrl ?? this.Url.Content("~/");
 
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
+            BlogUser user = await this.signInManager.GetTwoFactorAuthenticationUserAsync().ConfigureAwait( false );
             if (user == null)
             {
                 throw new InvalidOperationException($"Unable to load two-factor authentication user.");
             }
 
-            var authenticatorCode = Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
+            string authenticatorCode = this.Input.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
 
-            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, Input.RememberMachine);
+            SignInResult result = await this.signInManager.TwoFactorAuthenticatorSignInAsync(authenticatorCode, rememberMe, this.Input.RememberMachine).ConfigureAwait( false );
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
-                return LocalRedirect(returnUrl);
+                this.logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
+                return this.LocalRedirect(returnUrl);
             }
             else if (result.IsLockedOut)
             {
-                _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
-                return RedirectToPage("./Lockout");
+                this.logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
+                return this.RedirectToPage("./Lockout");
             }
             else
             {
-                _logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
-                ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
-                return Page();
+                this.logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
+                this.ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
+                return this.Page();
             }
         }
     }

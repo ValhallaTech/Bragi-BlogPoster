@@ -12,15 +12,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly SignInManager<BlogUser> signInManager;
 
         public ExternalLoginsModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>   userManager,
             SignInManager<BlogUser> signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
         }
 
         public IList<UserLoginInfo> CurrentLogins { get; set; }
@@ -34,77 +34,77 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
+                return this.NotFound($"Unable to load user with ID 'user.Id'.");
             }
 
-            CurrentLogins = await _userManager.GetLoginsAsync(user);
-            OtherLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync())
-                .Where(auth => CurrentLogins.All(ul => auth.Name != ul.LoginProvider))
-                .ToList();
-            ShowRemoveButton = user.PasswordHash != null || CurrentLogins.Count > 1;
-            return Page();
+            this.CurrentLogins = await this.userManager.GetLoginsAsync(user).ConfigureAwait( false );
+            this.OtherLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait( false ) )
+                               .Where(auth => this.CurrentLogins.All(ul => auth.Name != ul.LoginProvider))
+                               .ToList();
+            this.ShowRemoveButton = user.PasswordHash != null || this.CurrentLogins.Count > 1;
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostRemoveLoginAsync(string loginProvider, string providerKey)
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
+                return this.NotFound($"Unable to load user with ID 'user.Id'.");
             }
 
-            var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
+            IdentityResult result = await this.userManager.RemoveLoginAsync(user, loginProvider, providerKey).ConfigureAwait( false );
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not removed.";
-                return RedirectToPage();
+                this.StatusMessage = "The external login was not removed.";
+                return this.RedirectToPage();
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "The external login was removed.";
-            return RedirectToPage();
+            await this.signInManager.RefreshSignInAsync(user).ConfigureAwait( false );
+            this.StatusMessage = "The external login was removed.";
+            return this.RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostLinkLoginAsync(string provider)
         {
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait( false );
 
             // Request a redirect to the external login provider to link a login for the current user
-            var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            string                   redirectUrl = this.Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
+            AuthenticationProperties properties  = this.signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, this.userManager.GetUserId( this.User));
             return new ChallengeResult(provider, properties);
         }
 
         public async Task<IActionResult> OnGetLinkLoginCallbackAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
+                return this.NotFound($"Unable to load user with ID 'user.Id'.");
             }
 
-            var info = await _signInManager.GetExternalLoginInfoAsync(user.Id);
+            ExternalLoginInfo info = await this.signInManager.GetExternalLoginInfoAsync(user.Id).ConfigureAwait( false );
             if (info == null)
             {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
             }
 
-            var result = await _userManager.AddLoginAsync(user, info);
+            IdentityResult result = await this.userManager.AddLoginAsync(user, info).ConfigureAwait( false );
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not added. External logins can only be associated with one account.";
-                return RedirectToPage();
+                this.StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                return this.RedirectToPage();
             }
 
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await this.HttpContext.SignOutAsync(IdentityConstants.ExternalScheme).ConfigureAwait( false );
 
-            StatusMessage = "The external login was added.";
-            return RedirectToPage();
+            this.StatusMessage = "The external login was added.";
+            return this.RedirectToPage();
         }
     }
 }

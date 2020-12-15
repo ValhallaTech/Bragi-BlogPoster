@@ -1,68 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using BragiBlogPoster.Data;
 using BragiBlogPoster.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BragiBlogPoster.Controllers
 {
     public class Blogs1Controller : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
 
-        public Blogs1Controller(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public Blogs1Controller(ApplicationDbContext context) => this.context = context;
 
         // GET: Blogs1
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Blog.ToListAsync());
-        }
+        public async Task<IActionResult> Index() => this.View(await this.context.Blog.ToListAsync().ConfigureAwait( false ) );
 
         // GET: Blogs1/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var blog = await _context.Blog
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Blog blog = await this.context.Blog
+                                  .FirstOrDefaultAsync(m => m.Id == id)
+                                  .ConfigureAwait( false );
             if (blog == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(blog);
+            return this.View(blog);
         }
 
         // GET: Blogs1/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => this.View();
 
         // POST: Blogs1/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Url")] Blog blog)
+        public async Task<IActionResult> Create([Bind( "Id,Name,Url")] Blog blog)
         {
-            if (ModelState.IsValid)
+            if ( this.ModelState.IsValid)
             {
-                _context.Add(blog);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                this.context.Add(blog);
+                await this.context.SaveChangesAsync().ConfigureAwait( false );
+                return this.RedirectToAction(nameof( this.Index));
             }
-            return View(blog);
+
+            return this.View(blog);
         }
 
         // GET: Blogs1/Edit/5
@@ -70,15 +60,16 @@ namespace BragiBlogPoster.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var blog = await _context.Blog.FindAsync(id);
+            Blog blog = await this.context.Blog.FindAsync(id).ConfigureAwait( false );
             if (blog == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-            return View(blog);
+
+            return this.View(blog);
         }
 
         // POST: Blogs1/Edit/5
@@ -86,34 +77,36 @@ namespace BragiBlogPoster.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Url")] Blog blog)
+        public async Task<IActionResult> Edit(int id, [Bind( "Id,Name,Url")] Blog blog)
         {
             if (id != blog.Id)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            if (ModelState.IsValid)
+            if ( this.ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(blog);
-                    await _context.SaveChangesAsync();
+                    this.context.Update(blog);
+                    await this.context.SaveChangesAsync().ConfigureAwait( false );
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlogExists(blog.Id))
+                    if (!this.BlogExists(blog.Id))
                     {
-                        return NotFound();
+                        return this.NotFound();
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return this.RedirectToAction(nameof( this.Index));
             }
-            return View(blog);
+
+            return this.View(blog);
         }
 
         // GET: Blogs1/Delete/5
@@ -121,17 +114,18 @@ namespace BragiBlogPoster.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var blog = await _context.Blog
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Blog blog = await this.context.Blog
+                                  .FirstOrDefaultAsync(m => m.Id == id)
+                                  .ConfigureAwait( false );
             if (blog == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(blog);
+            return this.View(blog);
         }
 
         // POST: Blogs1/Delete/5
@@ -139,15 +133,15 @@ namespace BragiBlogPoster.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blog = await _context.Blog.FindAsync(id);
-            _context.Blog.Remove(blog);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            Blog blog = await this.context.Blog.FindAsync(id).ConfigureAwait( false );
+            this.context.Blog.Remove(blog);
+            await this.context.SaveChangesAsync().ConfigureAwait( false );
+            return this.RedirectToAction(nameof( this.Index));
         }
 
         private bool BlogExists(int id)
         {
-            return _context.Blog.Any(e => e.Id == id);
+            return this.context.Blog.Any(e => e.Id == id);
         }
     }
 }
