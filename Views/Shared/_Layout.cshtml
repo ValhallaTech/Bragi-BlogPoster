@@ -1,7 +1,5 @@
 ﻿@using BragiBlogPoster.Data
-@using BragiBlogPoster.Models
-@using Microsoft.AspNetCore.Identity
-@inject ApplicationDbContext db
+@inject ApplicationDbContext Db
 
 <!DOCTYPE html>
 <html lang = "en-US" >
@@ -12,6 +10,7 @@
     <title>@ViewData["Title"] - Something Like a Blog powered by Bragi BlogPoster</title>
     <link href = "~/lib/bootstrap/dist/css/bootstrap.min.css"
           rel = "stylesheet" />
+    <link href="~/lib/animate.css/animate.min.css" rel="stylesheet" />
     <link href = "~/css/site.css"
           rel = "stylesheet" />
 </head>
@@ -20,7 +19,11 @@
 <header>
     <nav class = "bg-white border-bottom box-shadow mb-3 navbar navbar-expand-sm navbar-light navbar-toggleable-sm" >
         <div class = "container" >
-            <a asp-action="Index" asp-controller="Home" class="navbar-brand">BlogPosts</a>
+            <a asp-action = "Index"
+               asp-controller = "Home"
+               class = "navbar-brand" >
+                Something Like a Blog
+            </a>
             <button aria-controls = "navbarSupportedContent"
                     aria-expanded = "false"
                     aria-label = "Toggle navigation"
@@ -41,14 +44,14 @@
                         </a>
                     </li>
                     <li class = "nav-item" >
-                        <a asp-action = "Create"
+                        <a asp-action = "Index"
                            asp-controller = "Blogs"
                            class = "nav-link text-dark" >
                             Blogs
                         </a>
                     </li>
                     <li class = "nav-item" >
-                        <a asp-action = "Create"
+                        <a asp-action = "Index"
                            asp-controller = "Posts"
                            class = "nav-link text-dark" >
                             Posts

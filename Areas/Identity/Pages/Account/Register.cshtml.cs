@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +20,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<BlogUser> signInManager;
-        private readonly UserManager<BlogUser> userManager;
-        private readonly ILogger<RegisterModel> logger;
-        private readonly IEmailSender emailSender;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly ILogger<RegisterModel>  logger;
+        private readonly IEmailSender            emailSender;
 
         public RegisterModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>   userManager,
             SignInManager<BlogUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            ILogger<RegisterModel>  logger,
+            IEmailSender            emailSender)
         {
             this.userManager   = userManager;
             this.signInManager = signInManager;
@@ -49,15 +48,17 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
+            public string Email { get; set; }
+
+            [Required]
+            [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [Display(Name = "FirstName")]
             public string FirstName { get; set; }
 
             [Required]
-            [Display(Name = "FirstName")]
-            public string LastName { get; set; }
-
-            [Required]
+            [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
             [Display(Name = "LastName")]
-            public string Email { get; set; }
+            public string LastName { get; set; }
 
             [Required]
             [StringLength(60, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
@@ -69,55 +70,69 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            [Display(Name = "Display Name")]
+            public string DisplayName { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            ReturnUrl = returnUrl;
-            ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            this.ReturnUrl   = returnUrl;
+            this.ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait( false ) ).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
-            ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            returnUrl        = returnUrl ?? this.Url.Content("~/");
+            this.ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync().ConfigureAwait( false ) ).ToList();
+            if ( this.ModelState.IsValid)
             {
-                var user   = new BlogUser { UserName = Input.Email, Email = Input.Email };
-                var result = await this.userManager.CreateAsync(user, Input.Password);
+                BlogUser       user   = new BlogUser
+                                        {
+                                            FirstName   = this.Input.FirstName,
+                                            LastName    = this.Input.LastName,
+                                            DisplayName = this.Input.DisplayName,
+                                            UserName    = this.Input.Email,
+                                            Email       = this.Input.Email
+                                        };
+                IdentityResult result = await this.userManager.CreateAsync(user, this.Input.Password).ConfigureAwait( false );
                 if (result.Succeeded)
                 {
                     this.logger.LogInformation("User created a new account with password.");
 
-                    var code = await this.userManager.GenerateEmailConfirmationTokenAsync(user);
+                    string code = await this.userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait( false );
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    string callbackUrl = this.Url.Page(
+                                                       "/Account/ConfirmEmail",
+                                                       pageHandler: null,
+                                                       values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                                                       protocol: this.Request.Scheme);
 
-                    await this.emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                                                          $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await this.emailSender.SendEmailAsync(
+                                                          this.Input.Email, "Confirm your email",
+                                                          $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.").ConfigureAwait( false );
 
                     if (this.userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return this.RedirectToPage("RegisterConfirmation", new { email = this.Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {
-                        await this.signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        await this.signInManager.SignInAsync(user, isPersistent: false).ConfigureAwait( false );
+                        return this.LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
+
+                foreach (IdentityError error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    this.ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return Page();
+            return this.Page();
         }
     }
 }

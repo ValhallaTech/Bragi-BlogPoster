@@ -12,15 +12,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class GenerateRecoveryCodesModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly ILogger<GenerateRecoveryCodesModel> _logger;
+        private readonly UserManager<BlogUser>               userManager;
+        private readonly ILogger<GenerateRecoveryCodesModel> logger;
 
         public GenerateRecoveryCodesModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>               userManager,
             ILogger<GenerateRecoveryCodesModel> logger)
         {
-            _userManager = userManager;
-            _logger = logger;
+            this.userManager = userManager;
+            this.logger      = logger;
         }
 
         [TempData]
@@ -31,43 +31,43 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+            bool isTwoFactorEnabled = await this.userManager.GetTwoFactorEnabledAsync(user).ConfigureAwait( false );
             if (!isTwoFactorEnabled)
             {
-                var userId = await _userManager.GetUserIdAsync(user);
+                string userId = await this.userManager.GetUserIdAsync(user).ConfigureAwait( false );
                 throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' because they do not have 2FA enabled.");
             }
 
-            return Page();
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            var isTwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
+            bool isTwoFactorEnabled = await this.userManager.GetTwoFactorEnabledAsync(user).ConfigureAwait( false );
+            string userId             = await this.userManager.GetUserIdAsync(user).ConfigureAwait( false );
             if (!isTwoFactorEnabled)
             {
                 throw new InvalidOperationException($"Cannot generate recovery codes for user with ID '{userId}' as they do not have 2FA enabled.");
             }
 
-            var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-            RecoveryCodes = recoveryCodes.ToArray();
+            IEnumerable<string> recoveryCodes = await this.userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait( false );
+            this.RecoveryCodes = recoveryCodes.ToArray();
 
-            _logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
-            StatusMessage = "You have generated new recovery codes.";
-            return RedirectToPage("./ShowRecoveryCodes");
+            this.logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
+            this.StatusMessage = "You have generated new recovery codes.";
+            return this.RedirectToPage("./ShowRecoveryCodes");
         }
     }
 }
