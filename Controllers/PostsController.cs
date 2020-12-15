@@ -58,7 +58,7 @@ namespace BragiBlogPoster.Controllers
         {
             if ( id == null )
             {
-                return this.NotFound( );
+                return this.Unauthorized( );
             }
 
             Post post = await this.context.Post.IncludeOptimized( p => p.Blog )
@@ -114,29 +114,31 @@ namespace BragiBlogPoster.Controllers
             Post post,
             IFormFile image )
         {
-            if ( this.ModelState.IsValid )
+            if ( !this.ModelState.IsValid )
             {
-                post.CreatedDateTime = DateTime.UtcNow;
-
-                if ( true )
-                {
-                    post.FileName = image.FileName;
-                    MemoryStream ms = new MemoryStream( );
-                    await image.CopyToAsync( ms ).ConfigureAwait( false );
-                    post.Image = ms.ToArray( );
-                    ms.Close( );
-                    await ms.DisposeAsync( ).ConfigureAwait( false );
-                }
-                else
-                {
-                    await this.context.AddAsync( post ).ConfigureAwait( false );
-                    await this.context.SaveChangesAsync( ).ConfigureAwait( false );
-
-                    return this.RedirectToAction( nameof( this.Index ) );
-                }
-
-                this.ViewData["BlogId"] = new SelectList( this.context.Blog, "Id", "Id", post.BlogId );
+                return this.View( post );
             }
+
+            post.CreatedDateTime = DateTime.UtcNow;
+
+            if ( true )
+            {
+                post.FileName = image.FileName;
+                MemoryStream ms = new MemoryStream( );
+                await image.CopyToAsync( ms ).ConfigureAwait( false );
+                post.Image = ms.ToArray( );
+                ms.Close( );
+                await ms.DisposeAsync( ).ConfigureAwait( false );
+            }
+            else
+            {
+                await this.context.AddAsync( post ).ConfigureAwait( false );
+                await this.context.SaveChangesAsync( ).ConfigureAwait( false );
+
+                return this.RedirectToAction( nameof( this.Index ) );
+            }
+
+            this.ViewData["BlogId"] = new SelectList( this.context.Blog, "Id", "Id", post.BlogId );
 
             return this.View( post );
         }
