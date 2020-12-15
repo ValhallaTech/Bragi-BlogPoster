@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,15 +9,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly SignInManager<BlogUser> signInManager;
 
         public IndexModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>   userManager,
             SignInManager<BlogUser> signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
         }
 
         public string Username { get; set; }
@@ -40,57 +37,57 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(BlogUser user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            string userName    = await this.userManager.GetUserNameAsync(user).ConfigureAwait( false );
+            string phoneNumber = await this.userManager.GetPhoneNumberAsync(user).ConfigureAwait( false );
 
-            Username = userName;
+            this.Username = userName;
 
-            Input = new InputModel
-            {
-                PhoneNumber = phoneNumber
-            };
+            this.Input = new InputModel
+                         {
+                             PhoneNumber = phoneNumber
+                         };
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            await LoadAsync(user);
-            return Page();
+            await this.LoadAsync(user).ConfigureAwait( false );
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                await LoadAsync(user);
-                return Page();
+                await this.LoadAsync(user).ConfigureAwait( false );
+                return this.Page();
             }
 
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            string phoneNumber = await this.userManager.GetPhoneNumberAsync(user).ConfigureAwait( false );
+            if ( this.Input.PhoneNumber != phoneNumber)
             {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                IdentityResult setPhoneResult = await this.userManager.SetPhoneNumberAsync(user, this.Input.PhoneNumber).ConfigureAwait( false );
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
-                    return RedirectToPage();
+                    this.StatusMessage = "Unexpected error when trying to set phone number.";
+                    return this.RedirectToPage();
                 }
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
+            await this.signInManager.RefreshSignInAsync(user).ConfigureAwait( false );
+            this.StatusMessage = "Your profile has been updated";
+            return this.RedirectToPage();
         }
     }
 }

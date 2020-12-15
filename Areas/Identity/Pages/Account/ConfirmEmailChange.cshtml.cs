@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using BragiBlogPoster.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,13 +12,13 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly SignInManager<BlogUser> signInManager;
 
         public ConfirmEmailChangeModel(UserManager<BlogUser> userManager, SignInManager<BlogUser> signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
         }
 
         [TempData]
@@ -31,35 +28,35 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account
         {
             if (userId == null || email == null || code == null)
             {
-                return RedirectToPage("/Index");
+                return this.RedirectToPage("/Index");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+            BlogUser user = await this.userManager.FindByIdAsync(userId).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{userId}'.");
+                return this.NotFound($"Unable to load user with ID '{userId}'.");
             }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ChangeEmailAsync(user, email, code);
+            IdentityResult result = await this.userManager.ChangeEmailAsync(user, email, code).ConfigureAwait( false );
             if (!result.Succeeded)
             {
-                StatusMessage = "Error changing email.";
-                return Page();
+                this.StatusMessage = "Error changing email.";
+                return this.Page();
             }
 
             // In our UI email and user name are one and the same, so when we update the email
             // we need to update the user name.
-            var setUserNameResult = await _userManager.SetUserNameAsync(user, email);
+            IdentityResult setUserNameResult = await this.userManager.SetUserNameAsync(user, email).ConfigureAwait( false );
             if (!setUserNameResult.Succeeded)
             {
-                StatusMessage = "Error changing user name.";
-                return Page();
+                this.StatusMessage = "Error changing user name.";
+                return this.Page();
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Thank you for confirming your email change.";
-            return Page();
+            await this.signInManager.RefreshSignInAsync(user).ConfigureAwait( false );
+            this.StatusMessage = "Thank you for confirming your email change.";
+            return this.Page();
         }
     }
 }

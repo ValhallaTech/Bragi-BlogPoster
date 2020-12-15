@@ -12,9 +12,6 @@ namespace BragiBlogPoster.Models
 
         protected virtual ICollection<Post> Posts { get; set; }
 
-        public Blog( )
-        {
-            this.Posts = new HashSet<Post>( );
-        }
+        public Blog( ) => this.Posts = new HashSet<Post>( );
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using BragiBlogPoster.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,15 +9,15 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<BlogUser> _userManager;
-        private readonly SignInManager<BlogUser> _signInManager;
+        private readonly UserManager<BlogUser>   userManager;
+        private readonly SignInManager<BlogUser> signInManager;
 
         public SetPasswordModel(
-            UserManager<BlogUser> userManager,
+            UserManager<BlogUser>   userManager,
             SignInManager<BlogUser> signInManager)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            this.userManager   = userManager;
+            this.signInManager = signInManager;
         }
 
         [BindProperty]
@@ -45,49 +42,50 @@ namespace BragiBlogPoster.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            var hasPassword = await _userManager.HasPasswordAsync(user);
+            bool hasPassword = await this.userManager.HasPasswordAsync(user).ConfigureAwait( false );
 
             if (hasPassword)
             {
-                return RedirectToPage("./ChangePassword");
+                return this.RedirectToPage("./ChangePassword");
             }
 
-            return Page();
+            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if (!this.ModelState.IsValid)
             {
-                return Page();
+                return this.Page();
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            BlogUser user = await this.userManager.GetUserAsync( this.User).ConfigureAwait( false );
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return this.NotFound($"Unable to load user with ID '{this.userManager.GetUserId( this.User)}'.");
             }
 
-            var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);
+            IdentityResult addPasswordResult = await this.userManager.AddPasswordAsync(user, this.Input.NewPassword).ConfigureAwait( false );
             if (!addPasswordResult.Succeeded)
             {
-                foreach (var error in addPasswordResult.Errors)
+                foreach (IdentityError error in addPasswordResult.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    this.ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return Page();
+
+                return this.Page();
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your password has been set.";
+            await this.signInManager.RefreshSignInAsync(user).ConfigureAwait( false );
+            this.StatusMessage = "Your password has been set.";
 
-            return RedirectToPage();
+            return this.RedirectToPage();
         }
     }
 }

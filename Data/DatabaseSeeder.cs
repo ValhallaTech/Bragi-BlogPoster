@@ -28,13 +28,13 @@ namespace BragiBlogPoster.Data
             if ( await userManager.FindByEmailAsync( "valhallatechnc@gmail.com" ).ConfigureAwait( false ) == null )
             {
                 BlogUser admin = new BlogUser
-                        {
-                            Email          = "valhallatechtest+administrator@gmail.com",
-                            UserName       = "valhallatechtest+administrator@gmail.com",
-                            FirstName      = "Fred",
-                            LastName       = "Smith",
-                            EmailConfirmed = true
-                        };
+                                 {
+                                     Email          = "valhallatechtest+administrator@gmail.com",
+                                     UserName       = "valhallatechtest+administrator@gmail.com",
+                                     FirstName      = "Fred",
+                                     LastName       = "Smith",
+                                     EmailConfirmed = true
+                                 };
 
                 await userManager.CreateAsync( admin, "Abc&123!" ).ConfigureAwait( false );
                 await userManager.AddToRoleAsync( admin, nameof( Roles.Administrator ) ).ConfigureAwait( false );
@@ -46,13 +46,13 @@ namespace BragiBlogPoster.Data
             if ( await userManager.FindByEmailAsync( "smith.fred@yahoo.com" ).ConfigureAwait( false ) == null )
             {
                BlogUser moderator = new BlogUser
-                                     {
-                                         Email          = "valhallatechtest+projectmanager@gmail.com",
-                                         UserName       = "valhallatechtest+projectmanager@gmail.com",
-                                         FirstName      = "Bill",
-                                         LastName       = "Williams",
-                                         EmailConfirmed = true
-                                     };
+                                    {
+                                        Email          = "valhallatechtest+projectmanager@gmail.com",
+                                        UserName       = "valhallatechtest+projectmanager@gmail.com",
+                                        FirstName      = "Bill",
+                                        LastName       = "Williams",
+                                        EmailConfirmed = true
+                                    };
                 await userManager.CreateAsync( moderator, "Abc&123!" ).ConfigureAwait( false );
                 await userManager.AddToRoleAsync( moderator, nameof( Roles.Moderator ) ).ConfigureAwait( false );
             }
